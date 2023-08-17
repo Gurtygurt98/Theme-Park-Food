@@ -5,8 +5,8 @@ This application will be built to have a one stop shop to view food offerings at
 ## Features
 
 - [ ] Implement form to add food items to the database
-- [ ] Providing filters to view food items based on festival/event, dietary restrictions, park, and park area.
-- [ ] Task 3
+- [ ] Implement filters to view food items based on festival/event, dietary restrictions, park, and park area.
+- [ ] Implement account management 
 
 ## Usage
 
