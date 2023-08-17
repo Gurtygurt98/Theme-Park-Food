@@ -1,0 +1,28 @@
+﻿@page "/UpdateFood"
+@using DisneyMudApp
+@using MudBlazor
+@using SQL_API
+<MudText Typo="Typo.h1">Food Form</MudText>
+<MudSwitch @bind-Checked="@FestivalToggle" Color="Color.Primary" Label="@FestivalItem" Size="Size.Large" />
+<MudTextField @bind-Value="FoodName" Label="Food Name" Variant="Variant.Outlined"></MudTextField>
+<MudTextField @bind-Value="Description" Label="Description" Variant="Variant.Outlined" Lines="3"></MudTextField>
+@if (FestivalToggle)
+{
+    // Change to a drop down with autofill options https://mudblazor.com/components/autocomplete#strict-mode
+    <MudAutocomplete T="string" Label="Festival" Variant="Variant.Outlined" @bind-Value="Festival">
+        <Items>
+            @* List of available festival options here *@
+        </Items>
+    </MudAutocomplete>
+}
+@*Change to a drop down with autofill options https://mudblazor.com/components/autocomplete#strict-mode *@
+
+<MudTextField @bind-Value="Festival" Label="Festival" Variant="Variant.Outlined"></MudTextField>
+@code {
+    string FoodName;
+    string Description;
+    string Festival;
+    string park;
+    public bool FestivalToggle { get; set; } = true;
+    string FestivalItem => FestivalToggle ? "Festival Offering" : "Normal Offering";
+}
