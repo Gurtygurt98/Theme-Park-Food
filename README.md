@@ -8,11 +8,11 @@ This application will be built to have a one stop shop to view food offerings at
 - [ ] Implement filters to view food items based on festival/event, dietary restrictions, park, and park area.
 - [ ] Implement account management ( user , admin) possibly more  
 
-## Usage
+## Usage - to do 
 
 Explain how to use your app once it's installed. You could describe the user interface, how to access different filters, and how users can interact with the food offerings.
 
-## Screenshots
+## Screenshots - to do
 
 Include screenshots of your app's user interface to give users a visual preview of what to expect.
 
