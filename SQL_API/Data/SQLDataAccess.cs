@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 
-namespace SQL_API
+namespace SQL_API.Data
 {
     public class SQLDataAccess : ISQLDataAccess
     {

@@ -9,10 +9,7 @@
 @if (FestivalToggle)
 {
     // Change to a drop down with autofill options https://mudblazor.com/components/autocomplete#strict-mode
-    <MudAutocomplete T="string" Label="Festival" Variant="Variant.Outlined" @bind-Value="Festival">
-        <Items>
-            @* List of available festival options here *@
-        </Items>
+    <MudAutocomplete T="string" Label="Festival" Variant="Variant.Outlined" @bind-Value="Festival" @SearchFunc="@Search1">
     </MudAutocomplete>
 }
 @*Change to a drop down with autofill options https://mudblazor.com/components/autocomplete#strict-mode *@
@@ -25,4 +22,20 @@
     string park;
     public bool FestivalToggle { get; set; } = true;
     string FestivalItem => FestivalToggle ? "Festival Offering" : "Normal Offering";
+    List<string> festivals = new List<string>();
+    protected  void OnIntialized()
+    {
+        festivals.Add("International Festival of the Arts");
+    }
+
+    private async Task<IEnumerable<string>> Search1(string value)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return festivals;
+        return festivals.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
 }

@@ -1,4 +1,4 @@
-﻿namespace SQL_API
+﻿namespace SQL_API.Data
 {
     public interface ISQLDataAccess
     {

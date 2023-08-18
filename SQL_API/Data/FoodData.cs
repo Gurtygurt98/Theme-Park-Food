@@ -4,8 +4,9 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using SQL_API.Models;
 
-namespace SQL_API
+namespace SQL_API.Data
 {
     public class FoodData : IFoodData
     {
@@ -13,7 +14,7 @@ namespace SQL_API
 
         public FoodData(ISQLDataAccess db)
         {
-            this._db = db;
+            _db = db;
         }
         public Task insertPrintJob(FoodModel FoodItem)
         {

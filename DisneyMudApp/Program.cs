@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using MudBlazor;
-using SQL_API;
 using MudBlazor.Services;
+using SQL_API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
