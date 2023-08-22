@@ -13,11 +13,9 @@ namespace SQL_API.Models
         public int FestivalID { get; set; }
         public string Location { get; set; }
         public decimal Price { get; set; }
-        public string Cuisine { get; set; }
-        public string FoodType { get; set; }
-        public decimal PopularityRating { get; set; }
-        public string ImageUrl {get; set; }
         public List<TagModel> Tags { get; set; }
+        public string CuisineType { get; set; }
+
         public FoodModel() { }
         public FoodModel(string foodName, string description, int festivalID, string location,decimal Price, string Cuisine, string foodType , decimal populatrityRating, string ImageUrl,List<TagModel> tags)
         {
@@ -31,7 +29,7 @@ namespace SQL_API.Models
             this.ImageUrl = ImageUrl;
             this.Tags = tags;
             this.FoodType = foodType;
-           
-        }
+       
     }
+}
 }
