@@ -8,22 +8,22 @@ namespace SQL_API.Models
 {
     public class FestivalModel
     {
-        public string FestivalName { get; set; }
-        public string Park { get; set; }
-        public DateOnly StartDate { get; set; }
-        public DateOnly EndDate { get; set; }
-        public string FestivalLink { get; set; }
+        public string Name { get; set; }
+        public int IDFestival { get; set; }
+        public DateOnly Start { get; set; }
+        public DateOnly End { get; set; }
+        public string Location { get; set; }
         public string Description { get; set; }
         public FestivalModel() { }
-
-        public FestivalModel(string festivalName, string park, DateOnly startDate, DateOnly endDate, string festivalLink, string description)
+        public FestivalModel(string name, int id, DateOnly start, DateOnly end, string location, string description)
         {
-            this.FestivalName = festivalName;
-            this.Park = park;
-            this.StartDate = startDate;
-            this.EndDate = endDate;
-            this.FestivalLink = festivalLink;
+            this.Name = name;
+            this.IDFestival = id;
+            this.Start = start;
+            this.End = end;
+            this.Location = location;
             this.Description = description;
         }
+
     }
 }
