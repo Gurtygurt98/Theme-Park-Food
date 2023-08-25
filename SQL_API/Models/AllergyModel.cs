@@ -8,12 +8,12 @@ namespace SQL_API.Models
 {
     public class AllergyModel
     {
-        public string AllergyName { get; set; }
-        public int FoodID { get;set; }
+        public string AllergyName { get; set; } = "Test-Allergy";
+        public int IDFood { get;set; }
         public AllergyModel(string allergyName, int foodID)
         {
             this.AllergyName = allergyName;
-            this.FoodID = foodID;
+            this.IDFood = foodID;
         }
         public AllergyModel() { }   
     }

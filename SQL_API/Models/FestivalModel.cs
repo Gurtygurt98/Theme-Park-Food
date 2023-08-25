@@ -9,7 +9,7 @@ namespace SQL_API.Models
     public class FestivalModel
     {
         public string Name { get; set; } = "Food and Wine 1955";
-        public int IDFestival { get; set; } = 999999;
+        public int IDFestival { get; set; }
         public DateOnly Start { get; set; } = new DateOnly(1995, 1, 1);
         public DateOnly End { get; set; } = new DateOnly(1995, 12, 31);
         public string Location { get; set; } = "Epcot";
