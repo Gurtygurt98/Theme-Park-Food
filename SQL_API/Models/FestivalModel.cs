@@ -16,13 +16,12 @@ namespace SQL_API.Models
         public string Description { get; set; } = "This is a default festival for the Festival Model";
         public FestivalModel() { }
 
-        public FestivalModel(string festivalName, string park, DateOnly startDate, DateOnly endDate, string festivalLink, string description)
+        public FestivalModel(string festivalName, string Location, DateOnly startDate, DateOnly endDate, string description)
         {
-            this.FestivalName = festivalName;
-            this.Park = park;
-            this.StartDate = startDate;
-            this.EndDate = endDate;
-            this.FestivalLink = festivalLink;
+            this.Name = festivalName;
+            this.Location = Location;
+            this.Start = startDate;
+            this.End = endDate;
             this.Description = description;
         }
 

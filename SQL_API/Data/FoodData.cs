@@ -18,7 +18,7 @@ namespace SQL_API.Data
         }
         public Task insertPrintJob(FoodModel FoodItem)
         {
-            string sql = @"INSERT INTO dbo.Label_Print (TYPE, PRINTED, BASEID,INPUT_ARGS,CREATE_DATE,CREATOR)" +
+            string sql = @"INSERT INTO FOOD (TYPE, PRINTED, BASEID,INPUT_ARGS,CREATE_DATE,CREATOR)" +
                 " VALUES (@TYPE, @PRINTED, @BASEID, @INPUT_ARGS, CURRENT_TIMESTAMP,@CREATOR);";
             return _db.SaveData(sql, FoodItem);
         }

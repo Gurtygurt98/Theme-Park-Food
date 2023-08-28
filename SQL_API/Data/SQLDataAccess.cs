@@ -15,7 +15,7 @@ namespace SQL_API.Data
     {
         // IConfiguration comes in from the front end through injection, placd in appsettings 
         private readonly IConfiguration _config;
-        public string ConnectionStringName { get; set; } = "Data Source = Database//DisneyFoodApp.db";
+        public string ConnectionStringName { get; set; } = "Data Source = DisneyFoodApp.db";
         public SQLDataAccess(IConfiguration config)
         {
             _config = config;
