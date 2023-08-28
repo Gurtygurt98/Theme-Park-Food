@@ -14,4 +14,8 @@
     <ProjectReference Include="..\SQL_API\SQL_API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>

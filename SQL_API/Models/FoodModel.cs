@@ -8,19 +8,22 @@ namespace SQL_API.Models
 {
     public class FoodModel
     {
-        public string FoodName { get; set; }
-        public string Description { get; set; }
-        public int FestivalID { get; set; }
-        public string Location { get; set; }
-        public decimal Price { get; set; }
-        public List<TagModel> Tags { get; set; }
-        public string CuisineType { get; set; }
-        public string Cuisine { get; set; }
-        public decimal PopularityRating { get; set; }
-        public string ImageUrl { get; set; }
-        public string FoodType { get; set; }
+        public int IdFood { get; set; }
+        public string FoodName { get; set; } = "Apple Turnip Pie";
+        public string Description { get; set; } = "Disgusting Food";
+        public int FestivalID { get; set; } = 999;
+        public string Location { get; set; } = "Greenland Booth";
+        public decimal Price { get; set; } = 6.99M;
+        public double PopularityRating { get; set; } = 5;
+        public string Cuisine { get; set; } = "Greenland";
+        public string ImageUrl { get; set; } = "/images/Epcot.jpg";
+        public string FoodType { get; set; } = "Dessert";
+        public DateOnly Start { get; set; } = new DateOnly(1995, 1, 1);
+        public DateOnly End { get; set; } = new DateOnly(1995, 12, 31);
+
         public FoodModel() { }
-        public FoodModel(string foodName, string description, int festivalID, string location,decimal Price, string Cuisine, string foodType , decimal populatrityRating, string ImageUrl,List<TagModel> tags)
+        public FoodModel(string foodName, string description, int festivalID, string location,decimal Price, string Cuisine,
+            string foodType , double populatrityRating, string ImageUrl, DateOnly start, DateOnly end)
         {
             this.FoodName = foodName;
             this.Description = description;
@@ -30,9 +33,9 @@ namespace SQL_API.Models
             this.Cuisine = Cuisine;
             this.PopularityRating = populatrityRating;
             this.ImageUrl = ImageUrl;
-            this.Tags = tags;
             this.FoodType = foodType;
-       
+            this.Start = start;
+            this.End = end;
+        }
     }
-}
 }

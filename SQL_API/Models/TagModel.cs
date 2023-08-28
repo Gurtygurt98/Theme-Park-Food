@@ -8,10 +8,15 @@ namespace SQL_API.Models
 {
     public class TagModel
     {
-        public string Tag { set; get; }
+        public string TagName { set; get; }
+        public int FoodID { set; get; }
         public TagModel() { }
 
-        public TagModel(string tag) { this.Tag = tag;}  
+        public TagModel(string tag,int id ) 
+        { 
+            this.TagName = tag; 
+            this.FoodID = id;
+        }  
 
     }
 }
