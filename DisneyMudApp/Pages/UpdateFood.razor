@@ -3,15 +3,8 @@
 @using MudBlazor
 @using SQL_API
 <MudText Typo="Typo.h1">Food Form</MudText>
-<MudSwitch @bind-Checked="@FestivalToggle" Color="Color.Primary" Label="@FestivalItem" Size="Size.Large" />
 <MudTextField @bind-Value="FoodName" Label="Food Name" Variant="Variant.Outlined"></MudTextField>
 <MudTextField @bind-Value="Description" Label="Description" Variant="Variant.Outlined" Lines="3"></MudTextField>
-@if (FestivalToggle)
-{
-    // Change to a drop down with autofill options https://mudblazor.com/components/autocomplete#strict-mode
-    <MudAutocomplete T="string" Label="Festival" Variant="Variant.Outlined" @bind-Value="Festival" @SearchFunc="@Search1">
-    </MudAutocomplete>
-}
 @*Change to a drop down with autofill options https://mudblazor.com/components/autocomplete#strict-mode *@
 
 <MudTextField @bind-Value="Festival" Label="Festival" Variant="Variant.Outlined"></MudTextField>
@@ -20,22 +13,5 @@
     string Description;
     string Festival;
     string park;
-    public bool FestivalToggle { get; set; } = true;
-    string FestivalItem => FestivalToggle ? "Festival Offering" : "Normal Offering";
-    List<string> festivals = new List<string>();
-    protected  void OnIntialized()
-    {
-        festivals.Add("International Festival of the Arts");
-    }
 
-    private async Task<IEnumerable<string>> Search1(string value)
-    {
-        // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
-
-        // if text is null or empty, show complete list
-        if (string.IsNullOrEmpty(value))
-            return festivals;
-        return festivals.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
 }
