@@ -1,8 +1,40 @@
 ﻿@page "/UpdateFestival"
 @using DisneyMudApp
 @using MudBlazor
-@using SQL_API
+@using SQL_API.Data
+@using SQL_API.Models
+@inject IFestivalData _db;
 <MudText Typo="Typo.h1">Festival Form</MudText>
+<MudForm>
+    <MudGrid>
+        <MudItem>
+            <MudTextField Label="Festival Name" @bind-Value="FestivalName"/>
+        </MudItem>
+        <MudItem>
+            <MudTextField Label="Location" @bind-Value="Location" />
+        </MudItem>
+        <MudItem>
+            <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
+        </MudItem>
+        <MudItem> 
+            <MudDatePicker Label="Start Date" @bind-Value="StartDate" />
+        </MudItem>
+        <MudItem>
+            <MudDatePicker Label="End Date" @bind-Value="EndDate" />
+        </MudItem>
+        <MudItem>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(async () => await Submit())">Order</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudForm>
 @code {
-
+    string FestivalName;
+    string StartDate;
+    string EndDate;
+    string Location;
+    string Description;
+    public async Task  Submit()
+    {
+        await _db.insertFestivalJob(new FestivalModel(FestivalName, Location, StartDate, EndDate, Description));
+    }
 }
