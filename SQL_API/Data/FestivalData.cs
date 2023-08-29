@@ -16,11 +16,11 @@ namespace SQL_API.Data
         {
             _db = db;
         }
-        public Task insertFestivalJob(FestivalModel FoodItem)
+        public Task insertFestivalJob(FestivalModel festivalItem)
         {
-            string sql = @"INSERT INTO Festival (TYPE, PRINTED, BASEID,INPUT_ARGS,CREATE_DATE,CREATOR)" +
+            string sql = @"INSERT INTO Festival (Name, StartDate, EndDate,Location,Description)" +
                 " VALUES (@Name , @Start , @End , @Location , @Description);";
-            return _db.SaveData(sql, FoodItem);
+            return _db.SaveData(sql, festivalItem);
         }
     }
 }

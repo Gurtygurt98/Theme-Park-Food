@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using Dapper;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 
 namespace SQL_API.Data
@@ -15,7 +9,7 @@ namespace SQL_API.Data
     {
         // IConfiguration comes in from the front end through injection, placd in appsettings 
         private readonly IConfiguration _config;
-        public string ConnectionStringName { get; set; } = "Data Source = DisneyFoodApp.db";
+        public string ConnectionStringName { get; set; } = Environment.CurrentDirectory + "\\DisneyFoodApp.db"; 
         public SQLDataAccess(IConfiguration config)
         {
             _config = config;
@@ -23,7 +17,7 @@ namespace SQL_API.Data
         public async Task<List<T>> LoadData<T, U>(string sql, U parameters)
         {
             string connectionString = _config.GetConnectionString(ConnectionStringName);
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SqliteConnection(connectionString))
             {
                 // Queries the database given a sql query as string sql and 
                 // Query Async returns a Iennumurable 
@@ -34,7 +28,8 @@ namespace SQL_API.Data
         public async Task SaveData<T>(string sql, T parameters)
         {
             string connectionString = _config.GetConnectionString(ConnectionStringName);
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            Console.WriteLine(connectionString + " Run");
+            using (IDbConnection connection = new SqliteConnection(connectionString))
             {
                 await connection.ExecuteAsync(sql, parameters);
             }
