@@ -27,16 +27,20 @@
         </MudItem>
     </MudGrid>
 </MudForm>
-<MudDataGrid Items="@FestivalList">
-    <Columns>
-        <PropertyColumn Property="x => x.IDFestival" Title="IDFestival" />
-        <PropertyColumn Property="x => x.Name" Title="Name" />
-        <PropertyColumn Property="x => x.Start" Title="Start" />
-        <PropertyColumn Property="x => x.End" Title="End" />
-        <PropertyColumn Property="x => x.Location" Title="Location" />
-        <PropertyColumn Property="x => x.Description" Title="Description" />
-    </Columns>
-</MudDataGrid>
+@if (FestivalList.Any())
+{
+    <MudDataGrid Items="@FestivalList">
+        <Columns>
+            <PropertyColumn Property="x => x.IDFestival" Title="IDFestival" />
+            <PropertyColumn Property="x => x.Name" Title="Name" />
+            <PropertyColumn Property="x => x.Start" Title="Start" />
+            <PropertyColumn Property="x => x.End" Title="End" />
+            <PropertyColumn Property="x => x.Location" Title="Location" />
+            <PropertyColumn Property="x => x.Description" Title="Description" />
+        </Columns>
+    </MudDataGrid>
+}
+
 @code {
     string FestivalName;
     string StartDate;
