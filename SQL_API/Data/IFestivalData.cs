@@ -4,6 +4,7 @@ namespace SQL_API.Data
 {
     public interface IFestivalData
     {
-        Task insertFestivalJob(FestivalModel FoodItem);
+        Task<List<FestivalModel>> GetFestivalData();
+        Task insertFestivalJob(FestivalModel festivalItem);
     }
 }

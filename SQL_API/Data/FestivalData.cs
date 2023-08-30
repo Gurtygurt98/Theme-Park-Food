@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using SQL_API.Models;
+﻿using SQL_API.Models;
 
 
 namespace SQL_API.Data
@@ -16,6 +10,12 @@ namespace SQL_API.Data
         public FestivalData(ISQLDataAccess db)
         {
             _db = db;
+        }
+        public Task<List<FestivalModel>> GetFestivalData()
+        {
+            string sql = $@"SELECT  *
+                        FROM Festival ;";
+            return _db.LoadData<FestivalModel>(sql, new { });
         }
         public Task insertFestivalJob(FestivalModel festivalItem)
         {
