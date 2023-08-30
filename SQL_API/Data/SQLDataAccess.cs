@@ -1,39 +1,36 @@
 ﻿using System.Data;
 using Dapper;
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 using Microsoft.Extensions.Configuration;
 
 namespace SQL_API.Data
 {
     public class SQLDataAccess : ISQLDataAccess
     {
-        // IConfiguration comes in from the front end through injection, placd in appsettings 
         private readonly IConfiguration _config;
-        public string ConnectionStringName { get; set; } = Environment.CurrentDirectory + "\\DisneyFoodApp.db"; 
+
         public SQLDataAccess(IConfiguration config)
         {
             _config = config;
         }
-        public async Task<List<T>> LoadData<T, U>(string sql, U parameters)
+
+        public string ConnectionString => _config.GetConnectionString("Default");
+
+        public async Task<List<T>> LoadData<T>(string sql, object queryParameters = null)
         {
-            string connectionString = _config.GetConnectionString(ConnectionStringName);
-            using (IDbConnection connection = new SqliteConnection(connectionString))
+            using (IDbConnection connection = new SQLiteConnection(ConnectionString))
             {
-                // Queries the database given a sql query as string sql and 
-                // Query Async returns a Iennumurable 
-                var data = await connection.QueryAsync<T>(sql, parameters);
+                var data = await connection.QueryAsync<T>(sql, queryParameters);
                 return data.ToList();
             }
         }
+
         public async Task SaveData<T>(string sql, T parameters)
         {
-            string connectionString = _config.GetConnectionString(ConnectionStringName);
-            Console.WriteLine(connectionString + " Run");
-            using (IDbConnection connection = new SqliteConnection(connectionString))
+            using (IDbConnection connection = new SQLiteConnection(ConnectionString))
             {
                 await connection.ExecuteAsync(sql, parameters);
             }
-
         }
     }
 }

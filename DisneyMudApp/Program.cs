@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using MudBlazor;
 using MudBlazor.Services;
 using SQL_API.Data;
-
 var builder = WebApplication.CreateBuilder(args);
 
 StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
@@ -12,11 +11,10 @@ StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configurat
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddTransient<ISQLDataAccess, SQLDataAccess>();
+builder.Services.AddTransient<ISQLDataAccess,SQLDataAccess>();
 builder.Services.AddTransient<IFoodData, FoodData>();
 builder.Services.AddTransient<IFestivalData, FestivalData>();
 builder.Services.AddMudServices();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

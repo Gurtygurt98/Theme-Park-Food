@@ -2,9 +2,9 @@
 {
     public interface ISQLDataAccess
     {
-        string ConnectionStringName { get; set; }
+        string ConnectionString { get; }
 
-        Task<List<T>> LoadData<T, U>(string sql, U parameters);
+        Task<List<T>> LoadData<T>(string sql, object queryParameters = null);
         Task SaveData<T>(string sql, T parameters);
     }
 }
