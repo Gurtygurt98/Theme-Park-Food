@@ -1,0 +1,27 @@
+﻿@page "/Festivals"
+@using DisneyMudApp
+@using MudBlazor
+@using SQL_API.Data
+@using SQL_API.Models
+@inject IFestivalData _db;
+<MudText Typo="Typo.h2">Festival Datas</MudText>
+@if(FestivalList.Any())
+{
+    <MudDataGrid Items="@FestivalList">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="Festival Name" />
+            <PropertyColumn Property="x => x.Location" Title="Location" />
+            <PropertyColumn Property="x => x.Start" Title="Start" />
+            <PropertyColumn Property="x => x.End" Title="End" />
+            <PropertyColumn Property="x => x.Description" Title="Description" />
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    public List<FestivalModel> FestivalList = new List<FestivalModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        FestivalList = await _db.GetFestivalData();
+    }
+}
