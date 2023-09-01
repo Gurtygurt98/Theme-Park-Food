@@ -4,18 +4,26 @@
 @using SQL_API.Data
 @using SQL_API.Models
 @inject IFestivalData _db;
-<MudText Typo="Typo.h2">Festival Datas</MudText>
+<MudText Typo="Typo.h2">Festival Data</MudText>
 @if(FestivalList.Any())
 {
-    <MudDataGrid Items="@FestivalList">
-        <Columns>
-            <PropertyColumn Property="x => x.Name" Title="Festival Name" />
-            <PropertyColumn Property="x => x.Location" Title="Location" />
-            <PropertyColumn Property="x => x.StartDate" Title="Start" />
-            <PropertyColumn Property="x => x.EndDate" Title="End" />
-            <PropertyColumn Property="x => x.Description" Title="Description" />
-        </Columns>
-    </MudDataGrid>
+<MudDataGrid Items="@FestivalList">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Festival Name" />
+        <PropertyColumn Property="x => x.Location" Title="Location" />
+        <PropertyColumn Property="x => x.StartDate" Title="Start" />
+        <PropertyColumn Property="x => x.EndDate" Title="End" />
+        <PropertyColumn Property="x => x.Description" Title="Description"/>
+        <TemplateColumn >
+            <CellTemplate>
+                <MudStack Row>
+                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Info" @onclick="() => Delete(context.Item.IDFestival)">  </MudButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
 }
 
 @code {
@@ -25,4 +33,13 @@
         FestivalList = await _db.GetFestivalData();
         Console.WriteLine("Print festival 1 " + FestivalList.First().ToString());
     }
+    async Task Delete(int id)
+    {
+        // Assuming _db.DeleteFestival is an async method
+        await _db.DeleteFestival(id);
+
+        // After deleting, you might want to refresh the data by calling GetFestivalData again
+        FestivalList = await _db.GetFestivalData();
+    }
+
 }
