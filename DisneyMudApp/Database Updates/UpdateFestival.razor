@@ -28,8 +28,8 @@
 
 @code {
     string? FestivalName = "";
-    DateTime? StartDate = DateTime.Today;
-    DateTime? EndDate = DateTime.Today.AddDays(1);
+    DateTime? StartDate;
+    DateTime? EndDate;
     string? Location = "";
     string? Description = "";
     private MudForm? formRef;
@@ -39,11 +39,6 @@
     {
         string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
         string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
-        Console.WriteLine("Festival Name: " + FestivalName);
-        Console.WriteLine("Start Date: " + startDateString);
-        Console.WriteLine("End Date: " + endDateString);
-        Console.WriteLine("Location: " + Location);
-        Console.WriteLine("Description: " + Description);
         await _db.insertFestivalJob(new FestivalModel(FestivalName, Location, startDateString, endDateString, Description));
         await formRef.ResetAsync();
     }

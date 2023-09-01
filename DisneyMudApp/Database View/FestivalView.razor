@@ -11,8 +11,8 @@
         <Columns>
             <PropertyColumn Property="x => x.Name" Title="Festival Name" />
             <PropertyColumn Property="x => x.Location" Title="Location" />
-            <PropertyColumn Property="x => x.Start" Title="Start" />
-            <PropertyColumn Property="x => x.End" Title="End" />
+            <PropertyColumn Property="x => x.StartDate" Title="Start" />
+            <PropertyColumn Property="x => x.EndDate" Title="End" />
             <PropertyColumn Property="x => x.Description" Title="Description" />
         </Columns>
     </MudDataGrid>
@@ -23,5 +23,6 @@
     protected override async Task OnInitializedAsync()
     {
         FestivalList = await _db.GetFestivalData();
+        Console.WriteLine("Print festival 1 " + FestivalList.First().ToString());
     }
 }
