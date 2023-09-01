@@ -17,7 +17,7 @@
         <TemplateColumn >
             <CellTemplate>
                 <MudStack Row>
-                    <MudButton Size="Size.Medium" Variant="Variant.Filled" Color="Color.Info" @onclick="() => Delete(context.Item.IDFestival)">  </MudButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Error" @onclick="() => Delete(context.Item)">Delete</MudIconButton>
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
@@ -31,12 +31,17 @@
     protected override async Task OnInitializedAsync()
     {
         FestivalList = await _db.GetFestivalData();
-        Console.WriteLine("Print festival 1 " + FestivalList.First().ToString());
     }
-    async Task Delete(int id)
+    async Task Delete(FestivalModel item)
     {
-        // Assuming _db.DeleteFestival is an async method
-        await _db.DeleteFestival(id);
+        await _db.DeleteFestival(item);
+
+        // After deleting, you might want to refresh the data by calling GetFestivalData again
+        FestivalList = await _db.GetFestivalData();
+    }
+    async Task Edit(FestivalModel item)
+    {
+        // Create method based on DataGrid webpage example with a pop up to edit information about the 
 
         // After deleting, you might want to refresh the data by calling GetFestivalData again
         FestivalList = await _db.GetFestivalData();

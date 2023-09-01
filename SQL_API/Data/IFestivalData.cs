@@ -4,7 +4,7 @@ namespace SQL_API.Data
 {
     public interface IFestivalData
     {
-        Task DeleteFestival(int festivalID);
+        Task DeleteFestival(FestivalModel festivalItem);
         Task<List<FestivalModel>> GetFestivalData();
         Task insertFestivalJob(FestivalModel festivalItem);
     }
