@@ -12,7 +12,6 @@ StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configurat
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddTransient<ISQLDataAccess,SQLDataAccess>();
-builder.Services.AddTransient<IFoodData, FoodData>();
 builder.Services.AddTransient<IFestivalData, FestivalData>();
 builder.Services.AddMudServices();
 var app = builder.Build();

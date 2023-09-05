@@ -26,15 +26,17 @@
     </MudGrid>
 </MudForm>
 
+
+
 @code {
+
     string? FestivalName = "";
-    DateTime? StartDate;
-    DateTime? EndDate;
+    public DateTime? StartDate = new DateTime();
+    public DateTime? EndDate = new DateTime();
     string? Location = "";
     string? Description = "";
     private MudForm? formRef;
     private bool debug = true;
-
     public async Task  Submit()
     {
         string startDateString = StartDate.Value.ToString("MM.dd.yyyy");

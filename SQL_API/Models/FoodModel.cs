@@ -8,7 +8,7 @@ namespace SQL_API.Models
 {
     public class FoodModel
     {
-        public int IdFood { get; set; }
+        public int ID { get; set; }
         public string FoodName { get; set; } = "Apple Turnip Pie";
         public string Description { get; set; } = "Disgusting Food";
         public int FestivalID { get; set; } = 999;
@@ -18,8 +18,8 @@ namespace SQL_API.Models
         public string Cuisine { get; set; } = "Greenland";
         public string ImageUrl { get; set; } = "/images/Epcot.jpg";
         public string FoodType { get; set; } = "Dessert";
-        public DateOnly Start { get; set; } = new DateOnly(1995, 1, 1);
-        public DateOnly End { get; set; } = new DateOnly(1995, 12, 31);
+        public DateOnly StartDate { get; set; } = new DateOnly(1995, 1, 1);
+        public DateOnly EndDate { get; set; } = new DateOnly(1995, 12, 31);
 
         public FoodModel() { }
         public FoodModel(string foodName, string description, int festivalID, string location,decimal Price, string Cuisine,
@@ -34,8 +34,8 @@ namespace SQL_API.Models
             this.PopularityRating = populatrityRating;
             this.ImageUrl = ImageUrl;
             this.FoodType = foodType;
-            this.Start = start;
-            this.End = end;
+            this.StartDate = start;
+            this.EndDate = end;
         }
     }
 }

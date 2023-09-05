@@ -5,6 +5,32 @@
 @using SQL_API.Models
 @inject IFestivalData _db;
 <MudText Typo="Typo.h2">Festival Data</MudText>
+@* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
+<MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
+<MudPopover Open="@isOpen" AnchorOrigin="Origin.CenterCenter">
+    <MudForm @ref="formRef">
+        <MudGrid>
+            <MudItem xs="10">
+                <MudStack>
+                    <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
+                    <MudTextField Label="Location" @bind-Value="Location" />
+                    <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
+                </MudStack>
+            </MudItem>
+            <MudItem xs="4">
+                <MudDatePicker Label="Start Date" @bind-Date="StartDate" />
+            </MudItem>
+            <MudItem xs="4">
+                <MudDatePicker Label="End Date" @bind-Date="EndDate" />
+            </MudItem>
+            <MudItem xs="4">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Submit">Submit</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudForm>
+    <MudButton OnClick="@ToggleAddPopover" Color="Color.Error">Close</MudButton>
+</MudPopover>
+@* Datagrid for all data in the festivals *@
 @if(FestivalList.Any())
 {
 <MudDataGrid Items="@FestivalList">
@@ -17,7 +43,8 @@
         <TemplateColumn >
             <CellTemplate>
                 <MudStack Row>
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Error" @onclick="() => Delete(context.Item)">Delete</MudIconButton>
+                     @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
+                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Error" @onclick="() => DeleteFestival(context.Item)">Delete</MudIconButton>
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
@@ -27,24 +54,51 @@
 }
 
 @code {
+    // Variable declaration 
+    bool isOpen = false;
+    string? FestivalName = "";
+    public DateTime? StartDate = new DateTime();
+    public DateTime? EndDate = new DateTime();
+    string? Location = "";
+    string? Description = "";
+    private MudForm? formRef;
     public List<FestivalModel> FestivalList = new List<FestivalModel>();
+    // Loads the FestivalList with data from the festival database 
     protected override async Task OnInitializedAsync()
     {
         FestivalList = await _db.GetFestivalData();
     }
-    async Task Delete(FestivalModel item)
+    // Toggles the Add Popover 
+    public void ToggleAddPopover()
+    {
+        if (isOpen)
+        {
+            isOpen = false;
+            return;
+        }
+        isOpen = true;
+    }
+    // Called by the Delete Festival button that is on each datagrid row 
+    async Task DeleteFestival(FestivalModel item)
     {
         await _db.DeleteFestival(item);
-
-        // After deleting, you might want to refresh the data by calling GetFestivalData again
         FestivalList = await _db.GetFestivalData();
     }
+    // Edit to be added to each datagrid row 
     async Task Edit(FestivalModel item)
     {
         // Create method based on DataGrid webpage example with a pop up to edit information about the 
 
-        // After deleting, you might want to refresh the data by calling GetFestivalData again
+
         FestivalList = await _db.GetFestivalData();
+    }
+    // Called by popover button to submit and add an item to the festival database
+    public async Task Submit()
+    {
+        string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
+        string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
+        await _db.insertFestivalJob(new FestivalModel(FestivalName, Location, startDateString, endDateString, Description));
+        await formRef.ResetAsync();
     }
 
 }
