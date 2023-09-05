@@ -10,11 +10,11 @@ This application will be built to have a one stop shop to view food offerings at
 
 ## Usage - to do 
 
-Explain how to use your app once it's installed. You could describe the user interface, how to access different filters, and how users can interact with the food offerings.
+
 
 ## Screenshots - to do
 
-Include screenshots of your app's user interface to give users a visual preview of what to expect.
+
 
 ## Technologies Used
 
@@ -22,6 +22,6 @@ Include screenshots of your app's user interface to give users a visual preview 
 
 - C#: C# is a versatile and powerful programming language used for building a wide range of applications, including web applications, desktop applications, and more.
 
-- SQL: SQL (Structured Query Language) is used for managing and querying relational databases. It's essential for storing and retrieving data efficiently.
+- SQLite is used for managing and querying relational databases. It's essential for storing and retrieving data efficiently.
 
 - Blazor Mud: Blazor Mud is a UI component library that provides ready-to-use UI controls and themes for Blazor applications. It helps create consistent and visually appealing user interfaces.
