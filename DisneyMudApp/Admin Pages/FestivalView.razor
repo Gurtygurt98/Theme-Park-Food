@@ -6,9 +6,11 @@
 @inject IFestivalData _db;
 <MudText Typo="Typo.h2">Festival Data</MudText>
 @* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
-<MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
-<MudPopover Open="@isOpen" AnchorOrigin="Origin.CenterCenter">
-    <MudForm @ref="formRef">
+<MudToolBar>
+    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
+</MudToolBar>
+<MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.CenterCenter">
+    <MudForm >
         <MudGrid>
             <MudItem xs="10">
                 <MudStack>
@@ -24,7 +26,7 @@
                 <MudDatePicker Label="End Date" @bind-Date="EndDate" />
             </MudItem>
             <MudItem xs="4">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="Submit">Submit</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddFestival">Submit</MudButton>
             </MudItem>
         </MudGrid>
     </MudForm>
@@ -33,8 +35,9 @@
 @* Datagrid for all data in the festivals *@
 @if(FestivalList.Any())
 {
-<MudDataGrid Items="@FestivalList">
+    <MudDataGrid Items="FestivalList" Virtualize="true" Striped="true" MultiSelection="false" @bind-SelectedItems="listSel">
     <Columns>
+        <SelectColumn />
         <PropertyColumn Property="x => x.Name" Title="Festival Name" />
         <PropertyColumn Property="x => x.Location" Title="Location" />
         <PropertyColumn Property="x => x.StartDate" Title="Start" />
@@ -55,13 +58,16 @@
 
 @code {
     // Variable declaration 
-    bool isOpen = false;
+    bool isOpenAdd = false;
+    bool isOpenDelete = false;
+    bool isOpenEdit = false;
+    public FestivalModel selectedFestival = new FestivalModel();
+    HashSet<FestivalModel> listSel = new();
     string? FestivalName = "";
-    public DateTime? StartDate = new DateTime();
-    public DateTime? EndDate = new DateTime();
+    public DateTime? StartDate { get; set; } = DateTime.Now;
+    public DateTime? EndDate { get; set; } = DateTime.Now;
     string? Location = "";
     string? Description = "";
-    private MudForm? formRef;
     public List<FestivalModel> FestivalList = new List<FestivalModel>();
     // Loads the FestivalList with data from the festival database 
     protected override async Task OnInitializedAsync()
@@ -71,13 +77,34 @@
     // Toggles the Add Popover 
     public void ToggleAddPopover()
     {
-        if (isOpen)
+        if (isOpenAdd)
         {
-            isOpen = false;
+            isOpenAdd = false;
             return;
         }
-        isOpen = true;
+        isOpenAdd = true;
     }
+    public void ToggleDeletePopover()
+    {
+        if (isOpenDelete)
+        {
+            isOpenDelete = false;
+            return;
+        }
+        isOpenDelete = true;
+    }
+    public void ToggleEditPopover()
+    {
+        if (isOpenEdit)
+        {
+            isOpenEdit = false;
+            return;
+        }
+        isOpenEdit = true;
+    }
+
+
+
     // Called by the Delete Festival button that is on each datagrid row 
     async Task DeleteFestival(FestivalModel item)
     {
@@ -93,12 +120,12 @@
         FestivalList = await _db.GetFestivalData();
     }
     // Called by popover button to submit and add an item to the festival database
-    public async Task Submit()
+    public async Task AddFestival()
     {
         string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
         string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
         await _db.insertFestivalJob(new FestivalModel(FestivalName, Location, startDateString, endDateString, Description));
-        await formRef.ResetAsync();
+        ToggleEditPopover();
     }
 
 }
