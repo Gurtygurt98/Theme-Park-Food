@@ -1,4 +1,4 @@
-# DisneyMudApp
+# Theme Park Food App
 ## Introduction
 This application will be built to have a one stop shop to view food offerings at Disney World, Universal Orlando and other theme parks.
 
