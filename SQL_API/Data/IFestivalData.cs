@@ -7,5 +7,6 @@ namespace SQL_API.Data
         Task DeleteFestival(FestivalModel festivalItem);
         Task<List<FestivalModel>> GetFestivalData();
         Task insertFestivalJob(FestivalModel festivalItem);
+        Task UpdateFestival(FestivalModel festivalItem);
     }
 }

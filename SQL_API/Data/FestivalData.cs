@@ -28,5 +28,11 @@ namespace SQL_API.Data
             string sql = "DELETE FROM Festival WHERE ID = @ID;";
             return _db.SaveData(sql, festivalItem);
         }
+        public Task UpdateFestival(FestivalModel festivalItem)
+        {
+            Console.WriteLine(festivalItem.ToString());
+            string sql = @"UPDATE FESTIVAL  SET NAME = @Name, StartDate = @StartDate, EndDate = @EndDate, Location = @Location, Description = @Description    WHERE ID = @ID;";
+            return _db.SaveData(sql, festivalItem);
+        }
     }
 }

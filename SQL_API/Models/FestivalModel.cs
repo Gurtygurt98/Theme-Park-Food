@@ -24,9 +24,18 @@ namespace SQL_API.Models
             this.EndDate = endDate;
             this.Description = description;
         }
+        public FestivalModel(int id, string festivalName, string Location, string startDate, string endDate, string description)
+        {
+            this.ID = id;
+            this.Name = festivalName;
+            this.Location = Location;
+            this.StartDate = startDate;
+            this.EndDate = endDate;
+            this.Description = description;
+        }
         public string ToString()
         {
-            return "Name: " + this.Name  + " Start " + StartDate + " End " + EndDate;
+            return "Name: " + this.Name  + " Start " + StartDate + " End " + EndDate + " ID " + ID;
         }
     }
 }

@@ -52,18 +52,19 @@
                 <MudDatePicker Label="End Date" @bind-Date="EndDate" />
             </MudItem>
             <MudItem xs="4">
-
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="EditFestival">Submit</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteFestival">Delete</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateFestival">Update</MudButton>
             </MudItem>
         </MudGrid>
     </MudForm>
-    <MudButton OnClick="@ToggleAddPopover" Color="Color.Error">Close</MudButton>
+    <MudButton OnClick="@ToggleEditPopover" Color="Color.Error">Close</MudButton>
 </MudPopover>
 @* Datagrid for all data in the festivals *@
 @if(FestivalList.Any())
 {
     <MudDataGrid Items="FestivalList" Virtualize="true" Striped="true">
     <Columns>
+        <PropertyColumn Property="x => x.ID" Title="ID" />
         <PropertyColumn Property="x => x.Name" Title="Festival Name" />
         <PropertyColumn Property="x => x.Location" Title="Location" />
         <PropertyColumn Property="x => x.StartDate" Title="Start" />
@@ -73,8 +74,7 @@
             <CellTemplate>
                 <MudStack Row>
                      @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
-                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Error" @onclick="() => EditFestival(context.Item)">Edit</MudIconButton>
-                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Error" @onclick="() => DeleteFestival(context.Item)">Delete</MudIconButton>
+                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditFestival(context.Item)">Edit</MudIconButton>
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
@@ -88,8 +88,8 @@
     bool isOpenAdd = false;
     bool isOpenDelete = false;
     bool isOpenEdit = false;
-    public FestivalModel selectedFestival = new FestivalModel();
-    HashSet<FestivalModel> listSel = new();
+    // Festival Model Data
+    int id;
     string? FestivalName = "";
     public DateTime? StartDate { get; set; } = DateTime.Now;
     public DateTime? EndDate { get; set; } = DateTime.Now;
@@ -104,6 +104,7 @@
     // Toggles the Add Popover 
     public void ToggleAddPopover()
     {
+        resetInputs();
         if (isOpenAdd)
         {
             isOpenAdd = false;
@@ -113,21 +114,10 @@
         isOpenDelete = false;
         isOpenAdd = true;
     }
-    // Toggles the Delete Popover
-    public void ToggleDeletePopover()
-    {
-        if (isOpenDelete)
-        {
-            isOpenDelete = false;
-            return;
-        }
-        isOpenEdit = false;
-        isOpenDelete = true;
-        isOpenAdd = false;
-    }
     // Toggless the Edit Popover
     public void ToggleEditPopover()
     {
+        resetInputs();
         if (isOpenEdit)
         {
             isOpenEdit = false;
@@ -137,21 +127,35 @@
         isOpenDelete = false;
         isOpenAdd = false;
     }
-
-
-
-    // Called by the Delete Festival button that is on each datagrid row 
-    async Task DeleteFestival(FestivalModel item)
+    // Called by the Delete Festival button that is on each edit popover
+    public async Task DeleteFestival()
     {
-        await _db.DeleteFestival(item);
+        string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
+        string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
+        await _db.DeleteFestival(new FestivalModel(id, FestivalName, Location, startDateString, endDateString, Description));
+        ToggleEditPopover();
         FestivalList = await _db.GetFestivalData();
     }
     // Edit to be added to each datagrid row 
-    async Task EditFestival (FestivalModel item)
+    public async Task EditFestival(FestivalModel item)
     {
         // Create method based on DataGrid webpage example with a pop up to edit information about the 
-        ToggleEditPopover();
 
+        ToggleEditPopover();
+        id = item.ID;
+        FestivalName = item.Name;
+        StartDate = DateTime.Parse(item.StartDate);
+        EndDate = DateTime.Parse(item.EndDate);
+        Location = item.Location;
+        Description = item.Description;
+        FestivalList = await _db.GetFestivalData();
+    }
+    public async Task UpdateFestival()
+    {
+        string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
+        string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
+        await _db.UpdateFestival(new FestivalModel(id,FestivalName, Location, startDateString, endDateString, Description));
+        ToggleEditPopover();
         FestivalList = await _db.GetFestivalData();
     }
     // Called by popover button to submit and add an item to the festival database
@@ -162,6 +166,15 @@
         await _db.insertFestivalJob(new FestivalModel(FestivalName, Location, startDateString, endDateString, Description));
         ToggleAddPopover();
         FestivalList = await _db.GetFestivalData();
+    }
+    // Used to reset inputs after a festival is edited or 
+    public void resetInputs()
+    {
+        FestivalName = "";
+        StartDate = DateTime.Now;
+        EndDate = DateTime.Now;
+        Location = "";
+        Description = "";
     }
 
 }
