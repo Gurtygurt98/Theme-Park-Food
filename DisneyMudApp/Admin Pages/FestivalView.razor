@@ -34,8 +34,13 @@
     </MudForm>
     <MudButton OnClick="@ToggleAddPopover" Color="Color.Error">Close</MudButton>
 </MudPopover>
-@*Edit Pop over *@
+@*Edit Delete Pop over *@
 <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+    <MudButtonGroup>
+        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteFestival">Delete</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateFestival">Update</MudButton>
+    </MudButtonGroup>
     <MudForm>
         <MudGrid>
             <MudItem xs="10">
@@ -51,13 +56,9 @@
             <MudItem xs="4">
                 <MudDatePicker Label="End Date" @bind-Date="EndDate" />
             </MudItem>
-            <MudItem xs="4">
-                <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteFestival">Delete</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateFestival">Update</MudButton>
-            </MudItem>
         </MudGrid>
     </MudForm>
-    <MudButton OnClick="@ToggleEditPopover" Color="Color.Error">Close</MudButton>
+
 </MudPopover>
 @* Datagrid for all data in the festivals *@
 @if(FestivalList.Any())
