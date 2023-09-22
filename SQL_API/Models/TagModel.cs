@@ -8,7 +8,7 @@ namespace SQL_API.Models
 {
     public class TagModel
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
         public string TagName { set; get; }
         public string FoodName { set; get; }
         public TagModel() { }
@@ -20,7 +20,7 @@ namespace SQL_API.Models
         }
         public TagModel(int id, string TagName, string FoodName)
         { 
-            this.Id = id;
+            this.ID = id;
             this.TagName = TagName;
             this.FoodName = FoodName;
         }

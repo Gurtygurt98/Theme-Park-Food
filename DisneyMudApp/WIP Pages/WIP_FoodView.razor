@@ -1,4 +1,4 @@
-﻿@page "/FoodsAdminWIP"
+﻿@page "/FoodAdminWIP"
 @using DisneyMudApp
 @using MudBlazor
 @using SQL_API.Data
@@ -340,11 +340,7 @@
         }
 
     }
-    public async Task AddLocation()
-    {
-        await _dbLocation.insertLocation(new LocationModel(Location,ParkName, FestivalName,AreaName));
-
-    }
+   
     public async Task UpdateFood()
     {
         SetInputsFood();

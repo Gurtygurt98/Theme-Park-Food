@@ -8,25 +8,22 @@ namespace SQL_API.Models
 {
     public class LocationModel
     {
-        int ID;
+        public int ID { get; set; }
         public string LocationName { get; set; } = "";
-        string ParkName;
-        string FestivalName;
-        string AreaName;
+        public string FestivalName { get; set; }
+        public string AreaName { get; set; }
 
         public LocationModel() { } 
-        public LocationModel(int id, string locationName, string parkName, string festivalName, string areaName)
+        public LocationModel(int id, string locationName, string festivalName, string areaName)
         {
             this.ID = id;
             LocationName = locationName;
-            ParkName = parkName;
             FestivalName = festivalName;
             AreaName = areaName;
         }
-        public LocationModel(string locationName, string parkName, string festivalName, string areaName)
+        public LocationModel(string locationName, string festivalName, string areaName)
         {
             LocationName = locationName;
-            ParkName = parkName;
             FestivalName = festivalName;
             AreaName = areaName;
         }

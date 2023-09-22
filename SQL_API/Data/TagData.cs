@@ -15,7 +15,7 @@ namespace SQL_API.Data
         {
             _db = db;
         }
-        public Task<List<TagModel>> GetAllergyData()
+        public Task<List<TagModel>> GetTagData()
         {
             string sql = $@"SELECT  *
                         FROM Tag";

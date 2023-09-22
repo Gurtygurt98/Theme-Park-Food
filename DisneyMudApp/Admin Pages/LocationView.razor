@@ -1,0 +1,144 @@
+﻿@page "/LocationAdmin"
+@using DisneyMudApp
+@using MudBlazor
+@using SQL_API.Data
+@using SQL_API.Models
+@inject ILocationData _db;
+<MudText Typo="Typo.h2">Location Data</MudText>
+@*Add Pop over *@
+<MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+    <MudForm>
+        <MudGrid>
+            <MudItem xs="10">
+                <MudStack>
+                    <MudTextField Label="Location Name" @bind-Value="LocationName" />
+                    <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
+                    <MudTextField Label="Area Name" @bind-Value="AreaName" />
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudForm>
+    <MudButtonGroup>
+        <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddLocation">Submit</MudButton>
+    </MudButtonGroup>
+</MudPopover>
+
+@*Edit Delete Pop over *@
+<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+    <MudForm>
+        <MudGrid>
+            <MudItem xs="10">
+                <MudStack>
+                    <MudTextField Label="Location Name" @bind-Value="LocationName" />
+                    <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
+                    <MudTextField Label="Area Name" @bind-Value="AreaName" />
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudForm>
+    <MudButtonGroup>
+        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteLocation">Delete</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateLocation">Update</MudButton>
+    </MudButtonGroup>
+</MudPopover>
+
+
+@* Datagrid for all data in the Location database *@
+@if (LocationList.Any())
+{
+    <MudDataGrid Items="LocationList" Virtualize="true" Striped="true">
+        <Columns>
+            <PropertyColumn Property="x => x.ID" Title="ID" />
+            <PropertyColumn Property="x => x.LocationName" Title="Location Name" />
+            <PropertyColumn Property="x => x.FestivalName" Title="Festival Name" />
+            <PropertyColumn Property="x => x.AreaName" Title="Area Name" />
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudStack Row>
+                     @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
+                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditLocation(context.Item)">Edit</MudIconButton>
+                 </MudStack>
+             </CellTemplate>
+         </TemplateColumn>
+     </Columns>
+ </MudDataGrid>
+
+}
+@code {
+    // Variable declaration
+    bool isOpenAdd= false;
+    bool isOpenEdit = false;
+    int ID;
+    string? LocationName = "";
+    string? FestivalName = "";
+    string? AreaName = "";
+    List<LocationModel> LocationList = new List<LocationModel>();
+    // Loads the ParkList with data from the park database
+    protected override async Task OnInitializedAsync()
+    {
+        LocationList = await _db.GetLocationData();
+    }
+    // Toggless the Add Popover
+    public void ToggleAddPopover()
+    {
+        ResetInputs();
+        if (isOpenAdd)
+        {
+            isOpenAdd = false;
+            return;
+        }
+        isOpenEdit = false;
+        isOpenAdd = true;
+    }
+    // Toggless the Edit Popover
+    public void ToggleEditPopover()
+    {
+        ResetInputs();
+        if (isOpenEdit)
+        {
+            isOpenEdit = false;
+            return;
+        }
+        isOpenEdit = true;
+        isOpenAdd = false;
+
+    }
+    public void ResetInputs()
+    {
+        LocationName = "";
+        FestivalName = "";
+        AreaName = "";
+    }
+    public void EditLocation(LocationModel item)
+    {
+        // Create method based on DataGrid webpage example with a pop up to edit information about the
+
+        ToggleEditPopover();
+        ID = item.ID;
+        LocationName = item.LocationName;
+        FestivalName = item.FestivalName;
+        AreaName = item.AreaName;
+    }
+    // Called by popover button to submit and add an item to the park database
+    public async Task AddLocation()
+    {
+        await _db.insertLocation(new LocationModel(LocationName, FestivalName, AreaName));
+        ToggleAddPopover();
+        LocationList = await _db.GetLocationData();
+    }
+    // Called by the Delete Festival button that is on each edit popover
+    public async Task DeleteLocation()
+    {
+        await _db.DeleteLocation(new LocationModel(ID, LocationName, FestivalName, AreaName));
+        ToggleEditPopover();
+        LocationList = await _db.GetLocationData();
+    }
+    public async Task UpdateLocation()
+    {
+        await _db.UpdateLocation(new LocationModel(ID, LocationName, FestivalName, AreaName));
+        ToggleEditPopover();
+        LocationList = await _db.GetLocationData();
+    }
+}

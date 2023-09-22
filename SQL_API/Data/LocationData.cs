@@ -23,8 +23,8 @@ namespace SQL_API.Data
         }
         public Task insertLocation(LocationModel locationItem)
         {
-            string sql = @"INSERT INTO Location (LocationName, ParkName, FestivalName,AreaName)" +
-                " VALUES (@LocationName, @ParkName, @FestivalName, @AreaName);";
+            string sql = @"INSERT INTO Location (LocationName, FestivalName,AreaName)" +
+                " VALUES (@LocationName,@FestivalName, @AreaName);";
             return _db.SaveData(sql, locationItem);
         }
         public Task DeleteLocation(LocationModel locationItem)
@@ -34,7 +34,7 @@ namespace SQL_API.Data
         }
         public Task UpdateLocation(LocationModel locationItem)
         {
-            string sql = @"UPDATE Location SET LocationName = @LocationName, ParkName = @ParkName, FestivalName = @FestivalName, AreaName = @AreaName   WHERE ID = @ID;";
+            string sql = @"UPDATE Location SET LocationName = @LocationName, FestivalName = @FestivalName, AreaName = @AreaName   WHERE ID = @ID;";
             return _db.SaveData(sql, locationItem);
         }
     }

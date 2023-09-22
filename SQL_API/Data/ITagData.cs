@@ -5,7 +5,7 @@ namespace SQL_API.Data
     public interface ITagData
     {
         Task DeleteTag(TagModel tagItem);
-        Task<List<TagModel>> GetAllergyData();
+        Task<List<TagModel>> GetTagData();
         Task insertTagJob(TagModel tagItem);
         Task UpdateTag(TagModel tagItem);
     }
