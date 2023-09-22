@@ -9,26 +9,24 @@ namespace SQL_API.Models
     public class FoodModel
     {
         public int ID { get; set; }
-        public string FoodName { get; set; } = "Apple Turnip Pie";
-        public string Description { get; set; } = "Disgusting Food";
-        public int FestivalID { get; set; } = 999;
-        public string Location { get; set; } = "Greenland Booth";
-        public decimal Price { get; set; } = 6.99M;
-        public double PopularityRating { get; set; } = 5;
-        public string Cuisine { get; set; } = "Greenland";
-        public string ImageUrl { get; set; } = "/images/Epcot.jpg";
-        public string FoodType { get; set; } = "Dessert";
-        public DateOnly StartDate { get; set; } = new DateOnly(1995, 1, 1);
-        public DateOnly EndDate { get; set; } = new DateOnly(1995, 12, 31);
+        public string FoodName { get; set; } = "";
+        public string Description { get; set; } 
+        public string LocationName { get; set; }
+        public decimal Price { get; set; }
+        public double PopularityRating { get; set; } 
+        public string Cuisine { get; set; }
+        public string ImageUrl { get; set; }
+        public string FoodType { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
 
         public FoodModel() { }
-        public FoodModel(string foodName, string description, int festivalID, string location,decimal Price, string Cuisine,
-            string foodType , double populatrityRating, string ImageUrl, DateOnly start, DateOnly end)
+        public FoodModel(string foodName, string description, string location,decimal Price, string Cuisine,
+            string foodType , double populatrityRating, string ImageUrl, string start, string end)
         {
             this.FoodName = foodName;
             this.Description = description;
-            this.FestivalID = festivalID;
-            this.Location = location;
+            this.LocationName = location;
             this.Price = Price;
             this.Cuisine = Cuisine;
             this.PopularityRating = populatrityRating;
@@ -36,6 +34,42 @@ namespace SQL_API.Models
             this.FoodType = foodType;
             this.StartDate = start;
             this.EndDate = end;
+        }
+        public FoodModel(int id,string foodName, string description, string location, decimal Price, string Cuisine,
+    string foodType, double populatrityRating, string ImageUrl, string start, string end)
+        {
+            this.ID = id; 
+            this.FoodName = foodName;
+            this.Description = description;
+            this.LocationName = location;
+            this.Price = Price;
+            this.Cuisine = Cuisine;
+            this.PopularityRating = populatrityRating;
+            this.ImageUrl = ImageUrl;
+            this.FoodType = foodType;
+            this.StartDate = start;
+            this.EndDate = end;
+        }
+        // Equals method comparing only FoodName
+        public override bool Equals(object obj)
+        {
+            if (obj is FoodModel other)
+            {
+                return string.Equals(FoodName, other.FoodName, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+
+        // GetHashCode method using FoodName's hash code
+        public override int GetHashCode()
+        {
+            return StringComparer.OrdinalIgnoreCase.GetHashCode(FoodName);
+        }
+
+        // ToString method displaying FoodName
+        public override string ToString()
+        {
+            return FoodName;
         }
     }
 }

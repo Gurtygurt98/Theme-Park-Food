@@ -1,8 +1,9 @@
-﻿@page "/Festivals"
+﻿@page "/FestivalsAdmin"
 @using DisneyMudApp
 @using MudBlazor
 @using SQL_API.Data
 @using SQL_API.Models
+@inject IParkData _dbParks;
 @inject IFestivalData _db;
 <MudText Typo="Typo.h2">Festival Data</MudText>
 @* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
@@ -16,49 +17,58 @@
             <MudItem xs="10">
                 <MudStack>
                     <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
-                    <MudTextField Label="Location" @bind-Value="Location" />
+                    <MudSelect @bind-Value="ParkItem"  T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                        @foreach (ParkModel parks in ParkList)
+                    {
+                        <MudSelectItem Value="@(parks)" />
+                    }
+                    </MudSelect>
                     <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
                 </MudStack>
             </MudItem>
             <MudItem xs="4">
-                <MudDatePicker Label="Start Date" @bind-Date="StartDate" />
+                <MudDatePicker AutoClose="@true" Editable="true" Label="Start Date" @bind-Date="StartDate" />
             </MudItem>
             <MudItem xs="4">
-                <MudDatePicker Label="End Date" @bind-Date="EndDate" />
-            </MudItem>
-            <MudItem xs="4">
-
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddFestival">Submit</MudButton>
+                <MudDatePicker AutoClose="@true" Editable="true" Label="End Date" @bind-Date="EndDate" />
             </MudItem>
         </MudGrid>
     </MudForm>
-    <MudButton OnClick="@ToggleAddPopover" Color="Color.Error">Close</MudButton>
+    <MudButtonGroup>
+        <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddFestival">Submit</MudButton>
+    </MudButtonGroup>
 </MudPopover>
 @*Edit Delete Pop over *@
 <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteFestival">Delete</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateFestival">Update</MudButton>
-    </MudButtonGroup>
+
     <MudForm>
         <MudGrid>
             <MudItem xs="10">
                 <MudStack>
                     <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
-                    <MudTextField Label="Location" @bind-Value="Location" />
+                    <MudSelect @bind-Value="ParkItem" T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                        @foreach (ParkModel parks in ParkList)
+                        {
+                            <MudSelectItem Value="@(parks)" />
+                        }
+                    </MudSelect>
                     <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
                 </MudStack>
             </MudItem>
             <MudItem xs="4">
-                <MudDatePicker Label="Start Date" @bind-Date="StartDate" />
+                <MudDatePicker AutoClose="@true" Editable="true" Label="Start Date" @bind-Date="StartDate" />
             </MudItem>
             <MudItem xs="4">
-                <MudDatePicker Label="End Date" @bind-Date="EndDate" />
+                <MudDatePicker AutoClose="@true" Editable="true" Label="End Date" @bind-Date="EndDate" />
             </MudItem>
         </MudGrid>
     </MudForm>
-
+    <MudButtonGroup>
+        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteFestival">Delete</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateFestival">Update</MudButton>
+    </MudButtonGroup>
 </MudPopover>
 @* Datagrid for all data in the festivals *@
 @if(FestivalList.Any())
@@ -66,8 +76,8 @@
     <MudDataGrid Items="FestivalList" Virtualize="true" Striped="true">
     <Columns>
         <PropertyColumn Property="x => x.ID" Title="ID" />
-        <PropertyColumn Property="x => x.Name" Title="Festival Name" />
-        <PropertyColumn Property="x => x.Location" Title="Location" />
+        <PropertyColumn Property="x => x.FestivalName" Title="Festival Name" />
+            <PropertyColumn Property="x => x.ParkName" Title="Park" />
         <PropertyColumn Property="x => x.StartDate" Title="Start" />
         <PropertyColumn Property="x => x.EndDate" Title="End" />
         <PropertyColumn Property="x => x.Description" Title="Description"/>
@@ -87,45 +97,45 @@
 @code {
     // Variable declaration 
     bool isOpenAdd = false;
-    bool isOpenDelete = false;
     bool isOpenEdit = false;
     // Festival Model Data
     int id;
+    ParkModel ParkItem;
     string? FestivalName = "";
     public DateTime? StartDate { get; set; } = DateTime.Now;
     public DateTime? EndDate { get; set; } = DateTime.Now;
-    string? Location = "";
+    string? Park = "";
     string? Description = "";
     public List<FestivalModel> FestivalList = new List<FestivalModel>();
+    public List<ParkModel> ParkList = new List<ParkModel>();
     // Loads the FestivalList with data from the festival database 
     protected override async Task OnInitializedAsync()
     {
+        ParkList = await _dbParks.GetParkData();
         FestivalList = await _db.GetFestivalData();
     }
     // Toggles the Add Popover 
     public void ToggleAddPopover()
     {
-        resetInputs();
+        ResetInputs();
         if (isOpenAdd)
         {
             isOpenAdd = false;
             return;
         }
         isOpenEdit = false;
-        isOpenDelete = false;
         isOpenAdd = true;
     }
     // Toggless the Edit Popover
     public void ToggleEditPopover()
     {
-        resetInputs();
+        ResetInputs();
         if (isOpenEdit)
         {
             isOpenEdit = false;
             return;
         }
         isOpenEdit = true;
-        isOpenDelete = false;
         isOpenAdd = false;
     }
     // Called by the Delete Festival button that is on each edit popover
@@ -133,29 +143,29 @@
     {
         string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
         string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
-        await _db.DeleteFestival(new FestivalModel(id, FestivalName, Location, startDateString, endDateString, Description));
+        await _db.DeleteFestival(new FestivalModel(id, FestivalName, Park, startDateString, endDateString, Description));
         ToggleEditPopover();
         FestivalList = await _db.GetFestivalData();
     }
     // Edit to be added to each datagrid row 
-    public async Task EditFestival(FestivalModel item)
+    public void EditFestival(FestivalModel item)
     {
         // Create method based on DataGrid webpage example with a pop up to edit information about the 
 
         ToggleEditPopover();
         id = item.ID;
-        FestivalName = item.Name;
+        FestivalName = item.FestivalName;
         StartDate = DateTime.Parse(item.StartDate);
         EndDate = DateTime.Parse(item.EndDate);
-        Location = item.Location;
+        ParkItem = new ParkModel(item.ParkName);
+
         Description = item.Description;
-        FestivalList = await _db.GetFestivalData();
     }
     public async Task UpdateFestival()
     {
         string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
         string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
-        await _db.UpdateFestival(new FestivalModel(id,FestivalName, Location, startDateString, endDateString, Description));
+        await _db.UpdateFestival(new FestivalModel(id, FestivalName, ParkItem.ParkName, startDateString, endDateString, Description));
         ToggleEditPopover();
         FestivalList = await _db.GetFestivalData();
     }
@@ -164,18 +174,20 @@
     {
         string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
         string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
-        await _db.insertFestivalJob(new FestivalModel(FestivalName, Location, startDateString, endDateString, Description));
+        await _db.insertFestival(new FestivalModel(FestivalName, Park, startDateString, endDateString, Description));
         ToggleAddPopover();
         FestivalList = await _db.GetFestivalData();
     }
     // Used to reset inputs after a festival is edited or 
-    public void resetInputs()
+    public void ResetInputs()
     {
         FestivalName = "";
         StartDate = DateTime.Now;
         EndDate = DateTime.Now;
-        Location = "";
+        Park = "";
         Description = "";
     }
+
+
 
 }

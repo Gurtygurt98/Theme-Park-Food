@@ -27,7 +27,6 @@ namespace SQL_API.Data
 
         public async Task SaveData<T>(string sql, T parameters)
         {
-            Console.WriteLine("Query Performed" + sql);
             using (IDbConnection connection = new SQLiteConnection(ConnectionString))
             {
                 await connection.ExecuteAsync(sql, parameters);

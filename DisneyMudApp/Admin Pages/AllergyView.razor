@@ -1,0 +1,100 @@
+﻿@page "/AllergyAdmin"
+@using DisneyMudApp
+@using MudBlazor
+@using SQL_API.Data
+@using SQL_API.Models
+@inject IAllergyData _db;
+<MudText Typo="Typo.h2">Allergy Data</MudText>
+
+@*Edit Delete Pop over *@
+<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+    <MudForm>
+        <MudGrid>
+            <MudItem xs="10">
+                <MudStack>
+                    <MudTextField Label="Allergy Name" @bind-Value="AllergyName" />
+                    <MudTextField Label="Food Name" @bind-Value="FoodName" />
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudForm>
+    <MudButtonGroup>
+        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteAllergy">Delete</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateAllergy">Update</MudButton>
+    </MudButtonGroup>
+</MudPopover>
+
+
+@* Datagrid for all data in the parks database *@
+@if (AllergyList.Any())
+{
+    <MudDataGrid Items="AllergyList" Virtualize="true" Striped="true">
+        <Columns>
+            <PropertyColumn Property="x => x.ID" Title="ID" />
+            <PropertyColumn Property="x => x.AllergyName" Title="Allergy Name" />
+            <PropertyColumn Property="x => x.FoodName" Title="Food Name" />
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudStack Row>
+                     @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
+                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditAllergy(context.Item)">Edit</MudIconButton>
+                 </MudStack>
+             </CellTemplate>
+         </TemplateColumn>
+     </Columns>
+ </MudDataGrid>
+
+}
+@code {
+    // Variable declaration
+    bool isOpenEdit = false;
+    int ID;
+    string? AllergyName = "";
+    string? FoodName = "";
+    List<AllergyModel> AllergyList = new List<AllergyModel>();
+    // Loads the ParkList with data from the park database
+    protected override async Task OnInitializedAsync()
+    {
+        AllergyList = await _db.GetAllergyData();
+    }
+    // Toggless the Edit Popover
+    public void ToggleEditPopover()
+    {
+        ResetInputs();
+        if (isOpenEdit)
+        {
+            isOpenEdit = false;
+            return;
+        }
+        isOpenEdit = true;
+    }
+    public void ResetInputs()
+    {
+        AllergyName = "";
+        FoodName = "";
+    }
+    public void EditAllergy(AllergyModel item)
+    {
+        // Create method based on DataGrid webpage example with a pop up to edit information about the
+
+        ToggleEditPopover();
+        ID = item.ID;
+        AllergyName = item.AllergyName;
+        FoodName = item.FoodName;
+    }
+    // Called by the Delete Festival button that is on each edit popover
+    public async Task DeleteAllergy()
+    {
+        await _db.DeleteAllergy(new AllergyModel(ID, AllergyName, FoodName));
+        ToggleEditPopover();
+        AllergyList = await _db.GetAllergyData();
+    }
+    public async Task UpdateAllergy()
+    {
+        await _db.UpdateAllergy(new AllergyModel(ID, AllergyName, FoodName));
+        ToggleEditPopover();
+        AllergyList = await _db.GetAllergyData();
+    }
+}
+

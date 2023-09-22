@@ -17,10 +17,10 @@ namespace SQL_API.Data
                         FROM Festival";
             return _db.LoadData<FestivalModel>(sql, new { });
         }
-        public Task insertFestivalJob(FestivalModel festivalItem)
+        public Task insertFestival(FestivalModel festivalItem)
         {
-            string sql = @"INSERT INTO Festival (Name, StartDate, EndDate,Location,Description)" +
-                " VALUES (@Name , @StartDate , @EndDate , @Location , @Description);";
+            string sql = @"INSERT INTO Festival (FestivalName, StartDate, EndDate, ParkName, Description)" +
+                " VALUES (@FestivalName , @StartDate , @EndDate , @ParkName , @Description);";
             return _db.SaveData(sql, festivalItem);
         }
         public Task DeleteFestival(FestivalModel festivalItem)
@@ -30,8 +30,7 @@ namespace SQL_API.Data
         }
         public Task UpdateFestival(FestivalModel festivalItem)
         {
-            Console.WriteLine(festivalItem.ToString());
-            string sql = @"UPDATE FESTIVAL  SET NAME = @Name, StartDate = @StartDate, EndDate = @EndDate, Location = @Location, Description = @Description    WHERE ID = @ID;";
+            string sql = @"UPDATE FESTIVAL  SET FestivalName = @FestivalName, StartDate = @StartDate, EndDate = @EndDate, ParkName = @ParkName, Description = @Description    WHERE ID = @ID;";
             return _db.SaveData(sql, festivalItem);
         }
     }

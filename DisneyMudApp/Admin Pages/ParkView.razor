@@ -1,0 +1,141 @@
+﻿@page "/ParksAdmin"
+@using DisneyMudApp
+@using MudBlazor
+@using SQL_API.Data
+@using SQL_API.Models
+@inject IParkData _db;
+<MudText Typo="Typo.h2">Park Data</MudText>
+@* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
+<MudToolBar>
+    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
+</MudToolBar>
+@*Add Pop over *@
+<MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+    <MudForm>
+        <MudGrid>
+            <MudItem xs="10">
+                <MudStack>
+                    <MudTextField Label="Park Name" @bind-Value="ParkName" />
+                    <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudForm>
+    <MudButtonGroup>
+        <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddPark">Submit</MudButton>
+    </MudButtonGroup>
+</MudPopover>
+@*Edit Delete Pop over *@
+<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+        <MudForm>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudTextField Label="Park Name" @bind-Value="ParkName" />
+                        <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    <MudButtonGroup>
+        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeletePark">Delete</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdatePark">Update</MudButton>
+    </MudButtonGroup>
+</MudPopover>
+
+@* Datagrid for all data in the parks database *@
+@if (ParkList.Any())
+{
+    <MudDataGrid Items="ParkList" Virtualize="true" Striped="true">
+        <Columns>
+            <PropertyColumn Property="x => x.ID" Title="ID" />
+            <PropertyColumn Property="x => x.ParkName" Title="Park Name" />
+            <PropertyColumn Property="x => x.Description" Title="Description" />
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudStack Row>
+                    @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditPark(context.Item)">Edit</MudIconButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+}
+
+@code {
+    // Variable declaration
+    bool isOpenAdd = false;
+    bool isOpenEdit = false;
+    int id;
+    string? ParkName = "";
+    string? Description = "";
+    List<ParkModel> ParkList = new();
+    // Loads the ParkList with data from the park database
+    protected override async Task OnInitializedAsync()
+    {
+        ParkList = await _db.GetParkData();
+    }
+    // Toggles the Add Popover
+    public void ToggleAddPopover()
+    {
+        ResetInputs();
+        if (isOpenAdd)
+        {
+            isOpenAdd = false;
+            return;
+        }
+        isOpenEdit = false;
+        isOpenAdd = true;
+    }
+    // Toggless the Edit Popover
+    public void ToggleEditPopover()
+    {
+        ResetInputs();
+        if (isOpenEdit)
+        {
+            isOpenEdit = false;
+            return;
+        }
+        isOpenEdit = true;
+        isOpenAdd = false;
+    }
+    public void ResetInputs()
+    {
+        ParkName = "";
+        Description = "";
+    }
+    // Called by popover button to submit and add an item to the park database
+    public async Task AddPark()
+    {
+        await _db.insertPark(new ParkModel(ParkName, Description));
+        ToggleAddPopover();
+        ParkList = await _db.GetParkData();
+    }
+    public void EditPark(ParkModel item)
+    {
+        // Create method based on DataGrid webpage example with a pop up to edit information about the
+
+        ToggleEditPopover();
+        id = item.ID;
+        ParkName = item.ParkName;
+        Description = item.Description;
+    }
+    // Called by the Delete Festival button that is on each edit popover
+    public async Task DeletePark()
+    {
+                await _db.DeletePark(new ParkModel(ParkName, Description));
+        ToggleEditPopover();
+        ParkList = await _db.GetParkData();
+    }
+    public async Task UpdatePark()
+    {
+        await _db.UpdatePark(new ParkModel(ParkName, Description));
+        ToggleEditPopover();
+        ParkList = await _db.GetParkData();
+    }
+}
+

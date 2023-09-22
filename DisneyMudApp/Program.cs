@@ -13,6 +13,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddTransient<ISQLDataAccess,SQLDataAccess>();
 builder.Services.AddTransient<IFestivalData, FestivalData>();
+builder.Services.AddTransient<IFoodData, FoodData>();
+builder.Services.AddTransient<IParkData, ParkData>();
+builder.Services.AddTransient<IAllergyData, AllergyData>();
+builder.Services.AddTransient<IFestivalData, FestivalData>();
+builder.Services.AddTransient<ILocationData, LocationData>();
+builder.Services.AddTransient<IAreaData, AreaData>();
+builder.Services.AddTransient<ITagData, TagData>();
 builder.Services.AddMudServices();
 var app = builder.Build();
 
