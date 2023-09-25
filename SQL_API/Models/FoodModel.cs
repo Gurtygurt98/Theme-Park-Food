@@ -13,7 +13,6 @@ namespace SQL_API.Models
         public string Description { get; set; } 
         public string LocationName { get; set; }
         public decimal Price { get; set; }
-        public double PopularityRating { get; set; } 
         public string Cuisine { get; set; }
         public string ImageUrl { get; set; }
         public string FoodType { get; set; }
@@ -22,21 +21,20 @@ namespace SQL_API.Models
 
         public FoodModel() { }
         public FoodModel(string foodName, string description, string location,decimal Price, string Cuisine,
-            string foodType , double populatrityRating, string ImageUrl, string start, string end)
+            string foodType , string ImageUrl, string start, string end)
         {
             this.FoodName = foodName;
             this.Description = description;
             this.LocationName = location;
             this.Price = Price;
             this.Cuisine = Cuisine;
-            this.PopularityRating = populatrityRating;
             this.ImageUrl = ImageUrl;
             this.FoodType = foodType;
             this.StartDate = start;
             this.EndDate = end;
         }
         public FoodModel(int id,string foodName, string description, string location, decimal Price, string Cuisine,
-    string foodType, double populatrityRating, string ImageUrl, string start, string end)
+    string foodType, string ImageUrl, string start, string end)
         {
             this.ID = id; 
             this.FoodName = foodName;
@@ -44,7 +42,6 @@ namespace SQL_API.Models
             this.LocationName = location;
             this.Price = Price;
             this.Cuisine = Cuisine;
-            this.PopularityRating = populatrityRating;
             this.ImageUrl = ImageUrl;
             this.FoodType = foodType;
             this.StartDate = start;

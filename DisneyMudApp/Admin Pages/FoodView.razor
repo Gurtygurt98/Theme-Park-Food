@@ -123,7 +123,6 @@
          <PropertyColumn Property="x => x.LocationName" Title="Location" />
          <PropertyColumn Property="x => x.Price" Title="Price" />
          <PropertyColumn Property="x => x.ImageUrl" Title="Image Url" />
-         <PropertyColumn Property="x => x.PopularityRating" Title="Popularity Rating" />
          <PropertyColumn Property="x => x.Cuisine" Title="Cuisine" />
          <PropertyColumn Property="x => x.FoodType" Title="FoodType" />
          <PropertyColumn Property="x => x.StartDate" Title="Start" />
@@ -158,7 +157,6 @@
     public string Location { get; set; }
     public decimal Price { get; set; }
     public string Park { get; set; }
-    public double PopularityRating { get; set; }
     public string Cuisine { get; set; }
     public string ImageUrl { get; set; }
     public string FoodType { get; set; }
@@ -173,7 +171,6 @@
 
         startDateString = StartDate.Value.ToString("MM.dd.yyyy");
         endDateString = EndDate.Value.ToString("MM.dd.yyyy");
-        PopularityRating = 0.0;
         ImageUrl = "/image/" + FoodName + ".jpg";
 
 
@@ -189,7 +186,6 @@
         Description = "";
         Location = "";
         Price = 0;
-        PopularityRating = 0;
         Cuisine = "";
         ImageUrl = "";
         FoodType = "";
@@ -239,7 +235,7 @@
     {
         string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
         string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
-        await _db.DeleteFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, PopularityRating, ImageUrl, startDateString, endDateString));
+        await _db.DeleteFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, ImageUrl, startDateString, endDateString));
         ToggleEditPopover();
         FoodList = await _db.GetFoodData();
 
@@ -253,7 +249,6 @@
         Description = item.Description;
         Location = item.LocationName;
         Price = item.Price;
-        PopularityRating = item.PopularityRating;
         Cuisine = item.Cuisine;
         ImageUrl = item.ImageUrl;
         FoodType = item.FoodType;
@@ -264,7 +259,7 @@
     public async Task AddFood()
     {
         SetInputsFood();
-        await _db.insertFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, PopularityRating, ImageUrl, startDateString, endDateString));
+        await _db.insertFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, ImageUrl, startDateString, endDateString));
         FoodList = await _db.GetFoodData();
         ToggleAddPopover();
 
@@ -272,7 +267,7 @@
     public async Task UpdateFood()
     {
         SetInputsFood();
-        await _db.UpdateFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, PopularityRating, ImageUrl, startDateString, endDateString));
+        await _db.UpdateFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, ImageUrl, startDateString, endDateString));
         ToggleEditPopover();
         FoodList = await _db.GetFoodData();
     }
