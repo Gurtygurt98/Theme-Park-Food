@@ -1,0 +1,18 @@
+﻿@page "/Home"
+<MudText Typo="Typo.h2">Theme Park Bites</MudText>
+@**@
+<MudCarousel Class="mud-width-full" Style="height:500px;" TData="object" AutoCycle="false">
+    <MudCarouselItem Color="@Color.Dark" Transition="Transition.Custom">
+        <div class="d-flex" style="height:25%">
+            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+        </div>
+    </MudCarouselItem>
+    <MudCarouselItem Color="@Color.Transparent" Transition="Transition.Custom">
+        <div class="d-flex" style="height:25%">
+            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+        </div>
+    </MudCarouselItem>
+</MudCarousel>
+@code {
+
+}
