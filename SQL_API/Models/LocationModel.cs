@@ -46,7 +46,14 @@ namespace SQL_API.Models
         // ToString method displaying Name
         public override string ToString()
         {
-            return LocationName;
+            if(FestivalName != "")
+            {
+                return LocationName;
+            }
+            else
+            {
+                return LocationName + " - " + FestivalName;
+            }
         }
     }
 }

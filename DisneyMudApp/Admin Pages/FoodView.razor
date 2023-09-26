@@ -7,6 +7,8 @@
 @inject IFoodData _db;
 @inject IFestivalData _dbFest;
 @inject ILocationData _dbLocation;
+@inject IAllergyData _dbAllergy;
+@inject ITagData _dbTag;
 <MudText Typo="Typo.h2">Food Data</MudText>
 @* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
 <MudToolBar>
@@ -141,7 +143,6 @@
     string Allergy;
     string Tag;
     public List<FoodModel> FoodList = new();
-    public List<FestivalModel> FestivalList = new();
     public List<LocationModel> LocationList = new();
     public List<string> AllergyList = new();
     public List<string> CuisineList = new();
@@ -200,10 +201,9 @@
     {
         CreateTagList();
         CreateAllergyList();
-        CreateFestivalList();
         CreateCuisineList();
         CreateFoodTypeList();
-        LocationList = await _dbLocation.GetLocationData();
+        CreateLocationList();
         FoodList = await _db.GetFoodData();
     }
     // Toggles the Add Popover
@@ -260,16 +260,32 @@
     {
         SetInputsFood();
         await _db.insertFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, ImageUrl, startDateString, endDateString));
+        await AddTags();
+        await AddAllergies();
         FoodList = await _db.GetFoodData();
         ToggleAddPopover();
 
     }
+    public async Task AddTags()
+    {
+
+    }
+    public async Task AddAllergies()
+    {
+
+    }
+    // Update Food 
     public async Task UpdateFood()
     {
         SetInputsFood();
         await _db.UpdateFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, ImageUrl, startDateString, endDateString));
         ToggleEditPopover();
         FoodList = await _db.GetFoodData();
+    }
+    // Query Database for a list of locations currently in the database
+    public async void CreateLocationList()
+    {
+        LocationList = await _dbLocation.GetLocationData();
     }
     public void CreateAllergyList()
     {
@@ -281,10 +297,6 @@
         AllergyList.Add("Wheat");
         AllergyList.Add("Fish");
         AllergyList.Add("Shellfish");
-    }
-    public async void CreateFestivalList()
-    {
-        FestivalList = await _dbFest.GetFestivalData();
     }
     public void CreateTagList()
     {

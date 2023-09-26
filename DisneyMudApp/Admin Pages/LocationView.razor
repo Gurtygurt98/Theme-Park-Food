@@ -5,6 +5,9 @@
 @using SQL_API.Models
 @inject ILocationData _db;
 <MudText Typo="Typo.h2">Location Data</MudText>
+<MudToolBar>
+    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
+</MudToolBar>
 @*Add Pop over *@
 <MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
     <MudForm>

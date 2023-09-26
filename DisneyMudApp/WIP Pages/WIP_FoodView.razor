@@ -144,7 +144,6 @@
          <PropertyColumn Property="x => x.LocationName" Title="Location" />
         <PropertyColumn Property="x => x.Price" Title="Price" />
         <PropertyColumn Property="x => x.ImageUrl" Title="Image Url" />
-        <PropertyColumn Property="x => x.PopularityRating" Title="Popularity Rating" />
         <PropertyColumn Property="x => x.Cuisine" Title="Cuisine" />
         <PropertyColumn Property="x => x.FoodType" Title="FoodType" />
         <PropertyColumn Property="x => x.StartDate" Title="Start" />
@@ -301,7 +300,7 @@
     {
         string startDateString = StartDate.Value.ToString("MM.dd.yyyy");
         string endDateString = EndDate.Value.ToString("MM.dd.yyyy");
-        await _db.DeleteFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, PopularityRating, ImageUrl, startDateString, endDateString));
+        await _db.DeleteFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, ImageUrl, startDateString, endDateString));
         ToggleEditPopover();
         FoodList = await _db.GetFoodData();
 
@@ -315,7 +314,6 @@
         Description = item.Description;
         Location = item.LocationName;
         Price = item.Price;
-        PopularityRating = item.PopularityRating;
         Cuisine = item.Cuisine;
         ImageUrl = item.ImageUrl;
         FoodType = item.FoodType;
@@ -326,7 +324,7 @@
     public async Task AddFood()
     {
         SetInputsFood();
-        await _db.insertFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, PopularityRating, ImageUrl, startDateString, endDateString));
+        await _db.insertFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, ImageUrl, startDateString, endDateString));
         FoodList = await _db.GetFoodData();
         LocationSearchList = await LocationSearch(Location);
         if (!LocationSearchList.Contains(Location))
@@ -344,7 +342,7 @@
     public async Task UpdateFood()
     {
         SetInputsFood();
-        await _db.UpdateFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, PopularityRating, ImageUrl, startDateString, endDateString));
+        await _db.UpdateFood(new FoodModel(ID, FoodName, Description, Location, Price, Cuisine, FoodType, ImageUrl, startDateString, endDateString));
         ToggleEditPopover();
         FoodList = await _db.GetFoodData();
     }   
