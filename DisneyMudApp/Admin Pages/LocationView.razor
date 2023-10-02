@@ -4,6 +4,8 @@
 @using SQL_API.Data
 @using SQL_API.Models
 @inject ILocationData _db;
+@inject IAreaData _dbArea;
+@inject IFestivalData _dbFestival;
 <MudText Typo="Typo.h2">Location Data</MudText>
 <MudToolBar>
     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
@@ -15,8 +17,18 @@
             <MudItem xs="10">
                 <MudStack>
                     <MudTextField Label="Location Name" @bind-Value="LocationName" />
-                    <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
-                    <MudTextField Label="Area Name" @bind-Value="AreaName" />
+                    <MudSelect @bind-Value="FestivalItem" T="FestivalModel" Label="Festival List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                        @foreach (FestivalModel festivals in FestivalList)
+                        {
+                            <MudSelectItem Value="@(festivals)" />
+                        }
+                    </MudSelect>
+                    <MudSelect @bind-Value="AreaItem" T="AreaModel" Label="Area List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                        @foreach (AreaModel areas in AreaList)
+                        {
+                            <MudSelectItem Value="@(areas)" />
+                        }
+                    </MudSelect>
                 </MudStack>
             </MudItem>
         </MudGrid>
@@ -74,14 +86,20 @@
     bool isOpenAdd= false;
     bool isOpenEdit = false;
     int ID;
+    AreaModel AreaItem;
+    FestivalModel FestivalItem;
     string? LocationName = "";
     string? FestivalName = "";
     string? AreaName = "";
+    List<FestivalModel> FestivalList = new List<FestivalModel>();
+    List<AreaModel> AreaList = new List<AreaModel>();
     List<LocationModel> LocationList = new List<LocationModel>();
     // Loads the ParkList with data from the park database
     protected override async Task OnInitializedAsync()
     {
+        AreaList = await _dbArea.GetAreaData();
         LocationList = await _db.GetLocationData();
+        FestivalList = await _dbFestival.GetFestivalData();
     }
     // Toggless the Add Popover
     public void ToggleAddPopover()
@@ -113,6 +131,8 @@
         LocationName = "";
         FestivalName = "";
         AreaName = "";
+        AreaItem = new AreaModel();
+        FestivalItem = new FestivalModel();
     }
     public void EditLocation(LocationModel item)
     {
@@ -121,12 +141,14 @@
         ToggleEditPopover();
         ID = item.ID;
         LocationName = item.LocationName;
-        FestivalName = item.FestivalName;
-        AreaName = item.AreaName;
+        FestivalItem = new FestivalModel(item.FestivalName);
+        AreaItem = new AreaModel(item.AreaName);
     }
     // Called by popover button to submit and add an item to the park database
     public async Task AddLocation()
     {
+        AreaName= AreaItem.AreaName;
+        FestivalName = FestivalItem.FestivalName;
         await _db.insertLocation(new LocationModel(LocationName, FestivalName, AreaName));
         ToggleAddPopover();
         LocationList = await _db.GetLocationData();

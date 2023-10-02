@@ -16,12 +16,16 @@ namespace SQL_API.Models
     {
         // Variable Declaration  
         public int ID { get; set; }
-        public string AreaName { get; set; }
+        public string AreaName { get; set; } = "";
         public string ParkName { get; set; }
         public AreaModel(string AreaName, string ParkName)
         {
-            this.AreaName = AreaName;
             this.ParkName = ParkName;
+            this.AreaName = AreaName;
+        }
+        public AreaModel(string AreaName)
+        {
+            this.AreaName = AreaName;
         }
         public AreaModel(int id ,string AreaName, string ParkName)
         {

@@ -12,6 +12,10 @@ namespace SQL_API.Models
         public string Description { get; set; }
 
         public FestivalModel() { }
+        public FestivalModel(string festivalName)
+        {
+            this.FestivalName = festivalName;
+        }
         public FestivalModel(string festivalName, string Location, string startDate, string endDate, string description)
         {
             this.FestivalName = festivalName;
