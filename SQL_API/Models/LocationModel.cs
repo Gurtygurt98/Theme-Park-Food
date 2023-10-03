@@ -10,7 +10,7 @@ namespace SQL_API.Models
     {
         public int ID { get; set; }
         public string LocationName { get; set; } = "";
-        public string FestivalName { get; set; }
+        public string FestivalName { get; set; } = "";
         public string AreaName { get; set; }
 
         public LocationModel() { } 
@@ -46,7 +46,7 @@ namespace SQL_API.Models
         // ToString method displaying Name
         public override string ToString()
         {
-            if(FestivalName != "")
+            if(FestivalName == "")
             {
                 return LocationName;
             }

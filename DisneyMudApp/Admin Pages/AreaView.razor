@@ -11,29 +11,29 @@
     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
 </MudToolBar>
 @*Add Pop over *@
-<MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
-    <MudForm>
-        <MudGrid>
-            <MudItem xs="10">
-                <MudStack>
-                    <MudSelect @bind-Value="ParkItem" T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
-                        @foreach (ParkModel parks in ParkList)
-                        {
-                            <MudSelectItem Value="@(parks)" />
-                        }
-                    </MudSelect>
-                    <MudTextField Label="Area Name" @bind-Value="AreaName"/>
-                </MudStack>
-            </MudItem>
-        </MudGrid>
-    </MudForm>
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddArea">Submit</MudButton>
-    </MudButtonGroup>
+<MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter" MinHeight="700px" MinWidth="700px" Width="" Height="50%">
+        <MudForm>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudSelect @bind-Value="ParkItem" T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                            @foreach (ParkModel parks in ParkList)
+                            {
+                                <MudSelectItem Value="@(parks)" />
+                            }
+                        </MudSelect>
+                        <MudTextField Label="Area Name" @bind-Value="AreaName"/>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddArea">Submit</MudButton>
+        </MudButtonGroup>
 </MudPopover>
 @*Edit Delete Pop over *@
-<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter">
     <MudForm>
         <MudGrid>
             <MudItem xs="10">
@@ -47,7 +47,7 @@
                     <MudTextField Label="Area Name" @bind-Value="AreaName" />
                 </MudStack>
             </MudItem>
-        </MudGrid>
+s        </MudGrid>
     </MudForm>
     <MudButtonGroup>
         <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
