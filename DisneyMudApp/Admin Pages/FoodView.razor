@@ -85,11 +85,42 @@
         <MudGrid>
             <MudItem xs="10">
                 <MudStack>
-                    <MudTextField Label="Food Name" @bind-Value="FoodName" />
-                    <MudTextField Label="Location" @bind-Value="Location" />
-                    <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
 
-                    <MudNumericField Label="Price" @bind-Value="Price" />
+                    <MudTextField Label="Food Name" @bind-Value="FoodName" />
+                    <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
+                    <MudSelect @bind-Value="@LocationItem" T="LocationModel" Label="Locations" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                        @foreach (LocationModel location in LocationList)
+                        {
+                            <MudSelectItem Value="@(location)" />
+                        }
+                    </MudSelect>
+
+                    <MudSelect @bind-SelectedValues="@FoodTagList" T="string" Label="Tags" AnchorOrigin="Origin.BottomCenter" MultiSelection="@true">
+                        @foreach (string tags in TagList)
+                        {
+                            <MudSelectItem Value="@(tags)" />
+                        }
+                    </MudSelect>
+                    <MudSelect @bind-SelectedValues="@FoodAllergyList" T="string" Label="Allergies" AnchorOrigin="Origin.BottomCenter" MultiSelection="@true">
+                        @foreach (string allergies in AllergyList)
+                        {
+                            <MudSelectItem Value="@(allergies)" />
+                        }
+                    </MudSelect>
+                    <MudSelect @bind-Value="@Cuisine" T="string" Label="Cuisine List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                        @foreach (string cuisine in CuisineList)
+                        {
+                            <MudSelectItem Value="@(cuisine)" />
+                        }
+                    </MudSelect>
+                    <MudSelect @bind-Value="@FoodType" T="string" Label="Food Type" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                        @foreach (string foodtype in FoodTypeList)
+                        {
+                            <MudSelectItem Value="@(foodtype)" />
+                        }
+                    </MudSelect>
+
+                    <MudNumericField T="decimal" Culture="_en" Label="Price" @bind-Value="Price" />
                 </MudStack>
             </MudItem>
             <MudItem xs="4">
@@ -266,13 +297,20 @@
         ToggleAddPopover();
 
     }
+    // Add tags 
     public async Task AddTags()
     {
-
+        foreach(string tag in FoodTagList)
+        {
+            await _dbTag.insertTagJob(new TagModel(tag, FoodName));
+        }
     }
     public async Task AddAllergies()
     {
-
+        foreach (string allergy in FoodAllergyList)
+        {
+            await _dbAllergy.insertAllergy(new AllergyModel(allergy, FoodName));
+        }
     }
     // Update Food 
     public async Task UpdateFood()
@@ -297,19 +335,27 @@
         AllergyList.Add("Wheat");
         AllergyList.Add("Fish");
         AllergyList.Add("Shellfish");
+        AllergyList.Add("Shellfish");
     }
     public void CreateTagList()
     {
+        TagList.Add("Fan Favorite");
+        TagList.Add("Kid-Friendly");
+        TagList.Add("Gourmet");
+        TagList.Add("Snack");
+        TagList.Add("Sweet Treats");
+        TagList.Add("Savory Delights");
+        TagList.Add("Healthy Options");
+        TagList.Add("International Flavors");
+        TagList.Add("Signature Dishes");
         TagList.Add("Vegetarian");
-        TagList.Add("Vegan");
         TagList.Add("Gluten-Free");
-        TagList.Add("Dairy-Free");
-        TagList.Add("Low-Carb");
-        TagList.Add("Low-Fat");
-        TagList.Add("High-Protein");
-        TagList.Add("Keto-Friendly");
-        TagList.Add("Sugar-Free");
-        TagList.Add("Nut-Free");
+        TagList.Add("Spicy");
+        TagList.Add("Classic Comfort Food");
+        TagList.Add("Exotic Eats");
+        TagList.Add("On-the-Go");
+        TagList.Add("Instagram-Worthy");
+
     }
     public void CreateCuisineList()
     {
@@ -330,6 +376,7 @@
     }
     public void CreateFoodTypeList()
     {
+
         FoodTypeList.Add("Fruit");
         FoodTypeList.Add("Vegetable");
         FoodTypeList.Add("Meat");

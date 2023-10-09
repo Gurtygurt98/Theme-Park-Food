@@ -23,8 +23,8 @@ namespace SQL_API.Data
         }
         public Task insertFood(FoodModel foodItem)
         {
-            string sql = @"INSERT INTO Food (FoodName, Description, LocationName, Price, Cuisine, FoodType, PopularityRating, ImageUrl, StartDate, EndDate) " +
-                         "VALUES (@FoodName, @Description, @LocationName, @Price, @Cuisine, @FoodType, @PopularityRating, @ImageUrl, @StartDate, @EndDate);";
+            string sql = @"INSERT INTO Food (FoodName, Description, LocationName, Price, Cuisine, FoodType, ImageUrl, StartDate, EndDate) " +
+                         "VALUES (@FoodName, @Description, @LocationName, @Price, @Cuisine, @FoodType, @ImageUrl, @StartDate, @EndDate);";
             return _db.SaveData(sql, foodItem);
         }
         public Task DeleteFood(FoodModel foodItem)
