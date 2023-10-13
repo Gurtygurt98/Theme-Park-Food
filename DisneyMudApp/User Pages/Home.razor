@@ -1,18 +1,56 @@
-﻿@page "/Home"
-<MudText Typo="Typo.h2">Theme Park Bites</MudText>
-@**@
-<MudCarousel Class="mud-width-full" Style="height:500px;" TData="object" AutoCycle="false">
-    <MudCarouselItem Color="@Color.Dark" Transition="Transition.Custom">
-        <div class="d-flex" style="height:25%">
-            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
-        </div>
-    </MudCarouselItem>
-    <MudCarouselItem Color="@Color.Transparent" Transition="Transition.Custom">
-        <div class="d-flex" style="height:25%">
-            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
-        </div>
-    </MudCarouselItem>
-</MudCarousel>
-@code {
+﻿@page "/"
+@using DisneyMudApp
+@using MudBlazor
+@using SQL_API.Data
+@using SQL_API.Models
+@inject IParkData _dbPark;
+@inject IFestivalData _dbFestival;
 
+<MudText Typo="Typo.h1" Align="Align.Center">Theme Park Bites</MudText>
+<MudGrid>
+    @*parks*@
+    <MudItem xs="5">
+        <MudText Typo="Typo.h2" Align="Align.Center">Parks</MudText>
+        @if (FestivalList.Any())
+        {
+            @foreach (ParkModel park in ParksList)
+            {
+                <MudText Typo="Typo.h4" Align="Align.Center">@park.ParkName</MudText>
+            }
+        }
+    </MudItem>
+    <MudItem xs="5" >
+        <MudText Typo="Typo.h2" Align="Align.Center">Festivals</MudText>
+        @if (FestivalList.Any())
+        {
+            @foreach(FestivalModel festival in FestivalList)
+            {
+               <MudText Typo="Typo.h4" Align="Align.Center" >@festival.FestivalName</MudText>
+            }
+        }
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    List<ParkModel> ParksList = new List<ParkModel>();
+    List<FestivalModel> FestivalList = new List<FestivalModel>();
+    // Function that intiallizes the webpage
+    protected override async Task OnInitializedAsync()
+    {
+        // Call methods to get festivals and parks that are in the database, will be used 
+        CreateFestivalList();
+        CreateParkList();
+
+    }
+    // Get Park List, Queries the database 
+    public async void CreateParkList()
+    {
+        ParksList = await _dbPark.GetParkData();
+    }
+    // Get Festival List, Queries the database 
+    public async void CreateFestivalList()
+    {
+        FestivalList = await _dbFestival.GetFestivalData();
+    }
 }
