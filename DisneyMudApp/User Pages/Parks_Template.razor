@@ -1,0 +1,27 @@
+﻿@page "/Parks/{ParkName}"
+
+@using SQL_API
+@using SQL_API.Models
+@using SQL_API.Data
+@inject IParkData _dbParks
+
+<h3></h3>
+<MudText Typo="Typo.h1" Align="Align.Center">@(Park != null ? Park.ParkName : "Park not found")</MudText>
+<MudDivider></MudDivider>
+<MudText Typo="Typo.subtitle1">@Park.Description</MudText>
+@code {
+    List<ParkModel> Parks = new List<ParkModel>();
+    ParkModel Park;
+
+    [Parameter] public string ParkName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Parks = await _dbParks.GetParkSingle(ParkName);
+
+        if (Parks != null && Parks.Count > 0)
+        {
+            Park = Parks.First();
+        }
+    }
+}

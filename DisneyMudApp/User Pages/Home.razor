@@ -9,14 +9,21 @@
 <MudText Typo="Typo.h1" Align="Align.Center">Theme Park Bites</MudText>
 <MudGrid>
     @*parks*@
-    <MudItem xs="5">
+    <MudItem xs="5" >
         <MudText Typo="Typo.h2" Align="Align.Center">Parks</MudText>
         @if (FestivalList.Any())
         {
+            
+
+            <MudStack>
+
+            
             @foreach (ParkModel park in ParksList)
             {
-                <MudText Typo="Typo.h4" Align="Align.Center">@park.ParkName</MudText>
+                <MudLink Typo="Typo.h4" Href="@LinkToPark(park)" Color="Color.Primary"> @park.ParkName</MudLink>
             }
+            </MudStack>
+            
         }
     </MudItem>
     <MudItem xs="5" >
@@ -26,6 +33,7 @@
             @foreach(FestivalModel festival in FestivalList)
             {
                <MudText Typo="Typo.h4" Align="Align.Center" >@festival.FestivalName</MudText>
+                <MudDivider></MudDivider>
             }
         }
     </MudItem>
@@ -35,6 +43,7 @@
 @code {
     List<ParkModel> ParksList = new List<ParkModel>();
     List<FestivalModel> FestivalList = new List<FestivalModel>();
+    string link;
     // Function that intiallizes the webpage
     protected override async Task OnInitializedAsync()
     {
@@ -52,5 +61,9 @@
     public async void CreateFestivalList()
     {
         FestivalList = await _dbFestival.GetFestivalData();
+    }
+    private string LinkToPark(ParkModel park)
+    {
+        return $"/Parks/{park.ParkName}";
     }
 }

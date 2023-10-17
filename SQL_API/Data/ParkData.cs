@@ -37,5 +37,12 @@ namespace SQL_API.Data
             string sql = @"UPDATE Park SET ParkName = @ParkName, Description = @Description  WHERE ID = @ID;";
             return _db.SaveData(sql, parkItem);
         }
+        public Task<List<ParkModel>> GetParkSingle(string ParkName)
+        {
+            string sql = $@"SELECT  *
+                        FROM Park WHERE ParkName = @ParkName";
+            var parameters = new { ParkName };
+            return _db.LoadData<ParkModel>(sql, parameters);
+        }
     }
 }
