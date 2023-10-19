@@ -18,7 +18,6 @@ namespace SQL_API.Models
         public string FoodType { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
-
         public FoodModel() { }
         public FoodModel(string foodName, string description, string location,decimal Price, string Cuisine,
             string foodType , string ImageUrl, string start, string end)

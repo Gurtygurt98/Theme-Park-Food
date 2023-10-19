@@ -34,7 +34,7 @@ namespace SQL_API.Data
         }
         public Task UpdateFood(FoodModel foodItem)
         {
-            string sql = @"UPDATE Food SET FoodName = @FoodName, StartDate = @StartDate, EndDate = @EndDate, LocationName = @LocationName, Description = @Description,  WHERE ID = @ID;";
+            string sql = @"UPDATE Food SET FoodName = @FoodName, StartDate = @StartDate, EndDate = @EndDate, LocationName = @LocationName, Description = @Description  WHERE ID = @ID;";
             return _db.SaveData(sql, foodItem);
         }
     }

@@ -200,7 +200,7 @@
     // Set inputs for food before DB insertion
     public void SetInputsFood()
     {
-
+        Location = LocationItem.LocationName;
         startDateString = StartDate.Value.ToString("MM.dd.yyyy");
         endDateString = EndDate.Value.ToString("MM.dd.yyyy");
         ImageUrl = "/image/" + FoodName + ".jpg";
@@ -334,7 +334,7 @@
         AllergyList.Add("Soy");
         AllergyList.Add("Wheat");
         AllergyList.Add("Fish");
-        AllergyList.Add("Shellfish");
+        AllergyList.Add("Sesame");
         AllergyList.Add("Shellfish");
     }
     public void CreateTagList()
@@ -371,6 +371,7 @@
         CuisineList.Add("American");
         CuisineList.Add("Kenyan");
         CuisineList.Add("Moroccan");
+        CuisineList.Add("Latin American");
         CuisineList.Add("Other");
 
     }

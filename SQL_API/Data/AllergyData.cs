@@ -24,7 +24,7 @@ namespace SQL_API.Data
         public Task insertAllergy(AllergyModel allergyItem)
         {
             string sql = @"INSERT INTO Allergy (AllergyName, FoodName)" +
-                " VALUES (@AllergyName, @FooDName);";
+                " VALUES (@AllergyName, @FoodName);";
             return _db.SaveData(sql, allergyItem);
         }
         public Task DeleteAllergy(AllergyModel allergyItem)
