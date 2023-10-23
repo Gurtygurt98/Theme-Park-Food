@@ -10,6 +10,7 @@ namespace SQL_API.Models
         public string EndDate { get; set; }
         public string ParkName { get; set; }
         public string Description { get; set; }
+        public List<LocationModel> Locations { get; set; }
         public FestivalModel() { }
         public FestivalModel(string festivalName)
         {

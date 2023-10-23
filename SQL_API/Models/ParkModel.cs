@@ -11,6 +11,7 @@ namespace SQL_API.Models
         public string ParkName { get; set; } = "";
         public int ID { get; set; }
         public string Description { get; set; }
+        public List<AreaModel> Areas { get; set; }
         public ParkModel() { }
         public ParkModel(string ParkName, string description)
         {
