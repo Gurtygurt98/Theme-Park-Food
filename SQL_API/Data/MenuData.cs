@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SQL_API.Data
 {
-    public class MenuData
+    public class MenuData : IMenuData
     {
         private readonly ISQLDataAccess _db;
 
@@ -15,18 +15,18 @@ namespace SQL_API.Data
         {
             _db = db;
         }
-        public Task<List<ParkModel>> GetParkMenuData(string ParkName)
+        public Task<List<MenuModel>> GetParkMenuData(string ParkName)
         {
             string sql = $@"SELECT
                                 Park.ParkName,
-                                Park.Description,
+                                Park.Description ParkDescription,
                                 Area.AreaName,
                                 Location.LocationName,
                                 Food.FoodName,
                                 Food.Price,
-                                Food.Description,
+                                Food.Description AS FoodDescription ,
                                 GROUP_CONCAT(DISTINCT Allergy.AllergyName) AS Allergy,
-                                GROUP_CONCAT(DISTINCT Tag.TagName) AS Tag
+                                GROUP_CONCAT(DISTINCT Tag.TagName) AS Tags
                             FROM Park
                             JOIN Area ON Park.ParkName = Area.ParkName
                             JOIN Location ON Area.AreaName = Location.AreaName
@@ -36,23 +36,7 @@ namespace SQL_API.Data
                             WHERE Park.ParkName = @ParkName
                             GROUP BY Food.FoodName
                             ORDER BY Area.AreaName, Location.LocationName";
-            return _db.LoadData<ParkModel>(sql, new { });
-        }
-        public Task insertArea(AreaModel AreaItem)
-        {
-            string sql = @"INSERT INTO Area (AreaName, ParkName)" +
-                " VALUES (@AreaName, @ParkName);";
-            return _db.SaveData(sql, AreaItem);
-        }
-        public Task DeleteArea(AreaModel AreaItem)
-        {
-            string sql = "DELETE FROM Area WHERE ID = @ID;";
-            return _db.SaveData(sql, AreaItem);
-        }
-        public Task UpdateArea(AreaModel AreaItem)
-        {
-            string sql = @"UPDATE Area SET AreaName = @AreaName, ParkName = @ParkName  WHERE ID = @ID;";
-            return _db.SaveData(sql, AreaItem);
+            return _db.LoadData<MenuModel>(sql, new ParkModel(ParkName));
         }
     }
 }

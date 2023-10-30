@@ -1,27 +1,43 @@
 ﻿@page "/Parks/{ParkName}"
-
+@using MudBlazor
 @using SQL_API
 @using SQL_API.Models
 @using SQL_API.Data
-@inject IParkData _dbParks
+@inject IMenuData _dbMenu;
 
 <h3></h3>
-<MudText Typo="Typo.h1" Align="Align.Center">@(Park != null ? Park.ParkName : "Park not found")</MudText>
+<MudText Typo="Typo.h1" Align="Align.Center">@(Menu != null ? Menu.ParkName: "Park not found")</MudText>
 <MudDivider></MudDivider>
-<MudText Typo="Typo.subtitle1">@Park.Description</MudText>
+    <MudText Typo="Typo.subtitle1">@(Menu != null ? Menu.ParkDescription : "Park not found - desc")</MudText>
+    @if (MenuList != null && MenuList.Any() && testing)
+    {
+        <MudDataGrid Items="MenuList" Virtualize="true" Striped="true">
+            <Columns>
+                <PropertyColumn Property="x => x.ParkName" Title="Park Name" />
+                <PropertyColumn Property="x => x.ParkDescription" Title="Park Description" />
+                <PropertyColumn Property="x => x.AreaName" Title="Area Name" />
+                <PropertyColumn Property="x => x.LocationName" Title="Location" />
+                <PropertyColumn Property="x => x.FoodName" Title="Food Name" />
+                <PropertyColumn Property="x => x.Price" Title="Price" />
+                <PropertyColumn Property="x => x.FoodDescription" Title="Description" />
+                <PropertyColumn Property="x => x.Allergy" Title="Allergies" />
+                <PropertyColumn Property="x => x.Tags" Title="Tags"/>
+             </Columns>
+        </MudDataGrid>
+    }
 @code {
-    List<ParkModel> Parks = new List<ParkModel>();
-    ParkModel Park;
-
+    List<MenuModel> MenuList = new List<MenuModel>();
+    MenuModel Menu = null;
+    Boolean testing = true;
     [Parameter] public string ParkName { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Parks = await _dbParks.GetParkSingle(ParkName);
+        MenuList = await _dbMenu.GetParkMenuData(ParkName);
 
-        if (Parks != null && Parks.Count > 0)
+        if (MenuList != null && MenuList.Count > 0)
         {
-            Park = Parks.First();
+            Menu = MenuList.First();
         }
     }
 }
