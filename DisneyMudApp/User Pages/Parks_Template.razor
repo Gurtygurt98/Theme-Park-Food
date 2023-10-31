@@ -16,20 +16,34 @@
 </MudSelect> 
 @if (MenuList != null && MenuList.Any() && testing)
 {
-    <MudDataGrid Items="MenuList" Virtualize="true" Striped="true">
-        <Columns>
-            <PropertyColumn Property="x => x.FoodName" Title="Food Name" />
-            <PropertyColumn Property="x => x.Price" Title="Price" />
-            <PropertyColumn Property="x => x.FoodDescription" Title="Description" />
-            <PropertyColumn Property="x => x.Allergy" Title="Allergies" />
-            <PropertyColumn Property="x => x.Tags" Title="Tags"/>
-            </Columns>
-    </MudDataGrid>
+    foreach (MenuModel food in MenuList)
+    {
+        <MudList Clickable="true">
+        @if (!food.AreaName.Equals(CurrentArea) || PrintCount == 0)
+        {
+            <MudText Typo="Typo.h3">@(food != null ? food.AreaName : "Park not found - Area")</MudText>
+
+        }
+        @if (!food.LocationName.Equals(CurrentLocation) || PrintCount == 0)
+        {
+            <MudText Typo="Typo.h4">@(food != null ? food.LocationName : "Park not found - Loc")</MudText>
+        }
+        <MudListItem Text = food.FoodName />
+        @PrintCount++;
+        @CurrentLocation = food.LocationName;
+        @CurrentArea = food.AreaName;
+        </MudList>
+
+
+    }
 }
 @code {
     List<MenuModel> MenuList = new List<MenuModel>();
     MenuModel Menu = null;
     Boolean testing = true;
+    String CurrentArea;
+    String CurrentLocation;
+    int PrintCount;
     [Parameter] public string ParkName { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -39,6 +53,9 @@
         if (MenuList != null && MenuList.Count > 0)
         {
             Menu = MenuList.First();
+            CurrentArea = Menu.AreaName;
+            CurrentLocation = Menu.LocationName;
+            PrintCount = 0;
         }
     }
 }
