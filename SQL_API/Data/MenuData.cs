@@ -24,6 +24,7 @@ namespace SQL_API.Data
                                 Location.LocationName,
                                 Food.FoodName,
                                 Food.Price,
+                                Food.Cuisine,
                                 Food.Description AS FoodDescription ,
                                 GROUP_CONCAT(DISTINCT Allergy.AllergyName) AS Allergy,
                                 GROUP_CONCAT(DISTINCT Tag.TagName) AS Tags

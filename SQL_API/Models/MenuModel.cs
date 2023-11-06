@@ -9,11 +9,12 @@
         public string FoodName { get; set; }
         public decimal Price { get; set; }
         public string FoodDescription { get; set; }
+        public string Cuisine { get; set; }
         public string Allergy { get; set; }
         public string Tags { get; set; }
 
         public MenuModel(string parkName, string parkDescription, string areaName,
-            string locationName, string foodName, decimal price, string foodDescription,
+            string locationName, string foodName, decimal price, string foodDescription, string cuisine,
             string allergies, string tags)
         {
             ParkName = parkName;
@@ -23,6 +24,7 @@
             FoodName = foodName;
             Price = price;
             FoodDescription = foodDescription;
+            Cuisine = cuisine;
             Allergy = allergies;
             Tags = tags;
         }
