@@ -37,5 +37,10 @@ namespace SQL_API.Data
             string sql = @"UPDATE Tag SET TagName = @TagName, FoodName = @FoodName   WHERE ID = @ID;";
             return _db.SaveData(sql, tagItem);
         }
+        public Task<List<String>> GetTags()
+        {
+            string sql = @"select DISTINCT Tag.TagName From Tag";
+            return _db.LoadData<String>(sql, new { });
+        }
     }
 }

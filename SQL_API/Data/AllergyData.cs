@@ -37,5 +37,10 @@ namespace SQL_API.Data
             string sql = @"UPDATE Area SET AllergyName = @AllergyName, FoodName = @FoodName  WHERE ID = @ID;";
             return _db.SaveData(sql, allergyItem);
         }
+        public Task<List<String>> GetAllergies()
+        {
+            string sql = @"select DISTINCT Allergy.AllergyName From Allergy";
+            return _db.LoadData<String>(sql, new { });
+        }
     }
 }

@@ -6,6 +6,7 @@ namespace SQL_API.Data
     {
         Task DeleteLocation(LocationModel locationItem);
         Task<List<LocationModel>> GetLocationData();
+        Task<List<string>> GetLocations(string ParkName);
         Task insertLocation(LocationModel locationItem);
         Task UpdateLocation(LocationModel locationItem);
     }

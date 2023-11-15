@@ -6,7 +6,7 @@
 @inject IMenuData _dbMenu;
 
 <h3></h3>
-<MudText Typo="Typo.h1" Align="Align.Center">@(Menu != null ? Menu.ParkName: "Park not found")</MudText>
+<MudText Typo="Typo.h2" Align="Align.Center">@(Menu != null ? Menu.ParkName: "Park not found")</MudText>
 <MudText Typo="Typo.subtitle1">@(Menu != null ? Menu.ParkDescription : "Park not found - desc")</MudText>
 <MudDivider></MudDivider>
 <MudSelect T="string" Label="Coffee" AnchorOrigin="Origin.BottomCenter">
@@ -18,21 +18,22 @@
 {
     foreach (MenuModel food in MenuList)
     {
-        <MudList Clickable="true">
         @if (!food.AreaName.Equals(CurrentArea) || PrintCount == 0)
         {
-            <MudText Typo="Typo.h3">@(food != null ? food.AreaName : "Park not found - Area")</MudText>
+            <MudText Typo="Typo.h3" Style="margin-left: 10px; text-decoration: underline;">@(food != null ? food.AreaName : "Park not found - Area")</MudText>
 
         }
         @if (!food.LocationName.Equals(CurrentLocation) || PrintCount == 0)
         {
-            <MudText Typo="Typo.h4">@(food != null ? food.LocationName : "Park not found - Loc")</MudText>
+            <MudText Typo="Typo.h4" Style="margin-left: 30px;">@(food != null ? food.LocationName : "Park not found - Loc")</MudText>
         }
-        <MudListItem Text = food.FoodName />
-        @PrintCount++;
-        @CurrentLocation = food.LocationName;
-        @CurrentArea = food.AreaName;
-        </MudList>
+        <MudText Typo="Typo.h5" Style="margin-left: 50px;">@food.FoodName - $@food.Price </MudText>
+        @if (true)
+        {
+            PrintCount++;
+            CurrentLocation = food.LocationName;
+            CurrentArea = food.AreaName;
+        }
 
 
     }

@@ -37,5 +37,10 @@ namespace SQL_API.Data
             string sql = @"UPDATE Area SET AreaName = @AreaName, ParkName = @ParkName  WHERE ID = @ID;";
             return _db.SaveData(sql, AreaItem);
         }
+        public Task<List<String>> GetAllAreas(string ParkName)
+        {
+            string sql = $@"select DISTINCT Area.AreaName From Area Where ParkName = @ParkName";
+            return _db.LoadData<String>(sql, new { ParkName });
+        }
     }
 }

@@ -6,6 +6,7 @@ namespace SQL_API.Data
     {
         Task DeleteTag(TagModel tagItem);
         Task<List<TagModel>> GetTagData();
+        Task<List<string>> GetTags();
         Task insertTagJob(TagModel tagItem);
         Task UpdateTag(TagModel tagItem);
     }

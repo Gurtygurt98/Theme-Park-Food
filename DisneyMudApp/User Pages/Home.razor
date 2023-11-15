@@ -6,11 +6,11 @@
 @inject IParkData _dbPark;
 @inject IFestivalData _dbFestival;
 
-<MudText Typo="Typo.h1" Align="Align.Center">Theme Park Bites</MudText>
+<MudText Typo="Typo.h2" Align="Align.Center">Theme Park Bites</MudText>
 <MudGrid>
     @*parks*@
-    <MudItem xs="5" >
-        <MudText Typo="Typo.h2" Align="Align.Center">Parks</MudText>
+    <MudItem xs="12" >
+        <MudText Typo="Typo.h3" >Parks</MudText>
         @if (FestivalList.Any())
         {
             
@@ -26,13 +26,13 @@
             
         }
     </MudItem>
-    <MudItem xs="5" >
-        <MudText Typo="Typo.h2" Align="Align.Center">Festivals</MudText>
+    <MudItem xs="12" >
+        <MudText Typo="Typo.h2" >Festivals</MudText>
         @if (FestivalList.Any())
         {
             @foreach(FestivalModel festival in FestivalList)
             {
-               <MudText Typo="Typo.h4" Align="Align.Center" >@festival.FestivalName</MudText>
+               <MudText Typo="Typo.h4" >@festival.FestivalName</MudText>
                 <MudDivider></MudDivider>
             }
         }

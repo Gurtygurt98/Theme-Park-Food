@@ -37,5 +37,13 @@ namespace SQL_API.Data
             string sql = @"UPDATE Location SET LocationName = @LocationName, FestivalName = @FestivalName, AreaName = @AreaName   WHERE ID = @ID;";
             return _db.SaveData(sql, locationItem);
         }
+        public Task<List<String>> GetLocations(string ParkName)
+        {
+            string sql = @"SELECT Location.LocationName 
+                FROM Area 
+                JOIN Location ON Area.AreaName = Location.AreaName 
+                WHERE Area.ParkName = @ParkName;";
+            return _db.LoadData<String>(sql, new { ParkName });
+        }
     }
 }
