@@ -4,23 +4,34 @@
 @using SQL_API.Models
 @using SQL_API.Data
 @inject IMenuData _dbMenu;
-
+@inject IAreaData _dbArea;
+@inject IAllergyData _dbAllergy;
+@inject ITagData _dbTag;
+@inject ILocationData _dbLocation;
 <h3></h3>
 <MudText Typo="Typo.h2" Align="Align.Center">@(Menu != null ? Menu.ParkName: "Park not found")</MudText>
 <MudText Typo="Typo.subtitle1">@(Menu != null ? Menu.ParkDescription : "Park not found - desc")</MudText>
-<MudDivider></MudDivider>
-<MudSelect T="string" Label="Coffee" AnchorOrigin="Origin.BottomCenter">
-    <MudSelectItem Value="@("Cappuccino")" />
-    <MudSelectItem Value="@("Cafe Latte")" />
-    <MudSelectItem Value="@("Espresso")" />
-</MudSelect> 
+<MudDivider Style="padding-bottom: 20px"></MudDivider>
+ <MudIconButton Style="padding-bottom: 20px" Icon="@Icons.Filled.Filter" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleFilterPopover">Edit</MudIconButton>
+
+<MudPopover Open= "@FilterPopover">
+    <MudSelect T="string" Label="Areas" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="AreaFilters">
+            @foreach (String area in AreaList)
+            {
+                <MudSelectItem T="string" Value="@area">@area</MudSelectItem>
+            }
+    </MudSelect>
+    <MudButton > Submit</MudButton>
+    <MudIconButton>Exit</MudIconButton>
+</MudPopover>
+
 @if (MenuList != null && MenuList.Any() && testing)
 {
     foreach (MenuModel food in MenuList)
     {
         @if (!food.AreaName.Equals(CurrentArea) || PrintCount == 0)
         {
-            <MudText Typo="Typo.h3" Style="margin-left: 10px; text-decoration: underline;">@(food != null ? food.AreaName : "Park not found - Area")</MudText>
+            <MudText Typo="Typo.h3" Style="margin-left: 10px; text-decoration: underline; padding-top:20px;">@(food != null ? food.AreaName : "Park not found - Area")</MudText>
 
         }
         @if (!food.LocationName.Equals(CurrentLocation) || PrintCount == 0)
@@ -39,16 +50,31 @@
     }
 }
 @code {
+    // Main Menu Data structure 
     List<MenuModel> MenuList = new List<MenuModel>();
+    // Used for filters 
+    List<string> AreaList = new List<string>();
+    List<string> LocationList = new List<string>();
+    List<string> TagList = new List<string>();
+    List<string> AllergyList = new List<string>();
+    private IEnumerable<string> AreaFilters { get; set; } = new HashSet<string>();
+    private IEnumerable<string> LocationFilters { get; set; } = new HashSet<string>();
+    private IEnumerable<string> TagFilters { get; set; } = new HashSet<string>();
+    private IEnumerable<string> AllergyFilters { get; set; } = new HashSet<string>();
     MenuModel Menu = null;
     Boolean testing = true;
     String CurrentArea;
     String CurrentLocation;
+    Boolean FilterPopover = false;
     int PrintCount;
     [Parameter] public string ParkName { get; set; }
-
+    // Runs on page intialization, queries database to gather menu and filtering data 
     protected override async Task OnInitializedAsync()
     {
+        AreaList = await _dbArea.GetAllAreas(ParkName);
+        LocationList = await _dbLocation.GetLocations(ParkName);
+        TagList = await _dbTag.GetTags();
+        AllergyList = await _dbAllergy.GetAllergies();
         MenuList = await _dbMenu.GetParkMenuData(ParkName);
 
         if (MenuList != null && MenuList.Count > 0)
@@ -58,5 +84,15 @@
             CurrentLocation = Menu.LocationName;
             PrintCount = 0;
         }
+    }
+    // Control Pop over for filter
+    public void ToggleFilterPopover()
+    {
+        if (FilterPopover)
+        {
+            FilterPopover = false;
+            return;
+        }
+        FilterPopover = true;
     }
 }
