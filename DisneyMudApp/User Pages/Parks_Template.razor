@@ -3,55 +3,94 @@
 @using SQL_API
 @using SQL_API.Models
 @using SQL_API.Data
-@inject IMenuData _dbMenu;
+@inject IParkData _dbPark;
 @inject IAreaData _dbArea;
 @inject IAllergyData _dbAllergy;
 @inject ITagData _dbTag;
 @inject ILocationData _dbLocation;
-<h3></h3>
-<MudText Typo="Typo.h2" Align="Align.Center">@(Menu != null ? Menu.ParkName: "Park not found")</MudText>
-<MudText Typo="Typo.subtitle1">@(Menu != null ? Menu.ParkDescription : "Park not found - desc")</MudText>
-<MudDivider Style="padding-bottom: 20px"></MudDivider>
- <MudIconButton Style="padding-bottom: 20px" Icon="@Icons.Filled.Filter" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleFilterPopover">Edit</MudIconButton>
 
-<MudPopover Open= "@FilterPopover">
-    <MudSelect T="string" Label="Areas" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="AreaFilters">
-            @foreach (String area in AreaList)
+<MudGrid Spacing="4">
+    <MudItem xs="12">
+        <MudText Typo="Typo.h2" Align="Align.Center">@(ParkMenu != null ? ParkMenu.ParkName : "Park not found")</MudText>
+    </MudItem>
+    <MudItem xs="12">
+            <MudText Typo="Typo.subtitle1">@(ParkMenu != null ? ParkMenu.Description : "Park not found - desc")</MudText>
+    </MudItem>
+    <MudDivider Style="padding-bottom: 20px"></MudDivider>
+    <MudItem xs="12">
+        <MudFab Style="padding-bottom: 20px" Icon="@Icons.Filled.Filter" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleFilterPopover">Edit</MudFab>
+    </MudItem>
+    @*Display the menu, stored in the MenuList - List  *@
+    <MudItem xs="2">
+            <MudPopover Open="@FilterPopover" AnchorOrigin="Origin.TopLeft" TransformOrigin="Origin.BottomLeft">
+                <MudSelect T="string" Label="Areas" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="AreaFilters">
+                    @foreach (String area in AreaList)
+                {
+                    <MudSelectItem T="string" Value="@area">@area</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="string" Label="Locations" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="LocationFilters">
+                @foreach (String location in LocationList)
+                {
+                    <MudSelectItem T="string" Value="@location">@location</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="string" Label="Tags" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="TagFilters">
+                @foreach (String tag in TagList)
+                {
+                    <MudSelectItem T="string" Value="@tag">@tag</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="string" Label="Allergies" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="AllergyFilters">
+                @foreach (String allergy in AllergyList)
+                {
+                    <MudSelectItem T="string" Value="@allergy">@allergy</MudSelectItem>
+                }
+            </MudSelect>
+            <MudStack Row="true">
+                <MudButton OnClick="@ToggleFilterPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="@UpdateMenu">Submit</MudButton>
+            </MudStack>
+
+        </MudPopover>
+    </MudItem>
+        
+
+
+    @if(ParkMenu.Areas.Any()){
+        @foreach(AreaModel area in ParkMenu.Areas){
+
+            <MudItem xs="12">
+                <MudText Typo="Typo.h3" Style="margin-left: 10px; text-decoration: underline; padding-top:20px;">@area.AreaName</MudText>
+            </MudItem>
+            @foreach(LocationModel location in area.Locations)
             {
-                <MudSelectItem T="string" Value="@area">@area</MudSelectItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h4" Style="margin-left: 30px;  text-decoration: underline;">@location.LocationName</MudText>
+                </MudItem>
+                @foreach(FoodModel food in location.Foods)
+                {
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h5" Style="margin-left: 50px;">@food.FoodName</MudText>
+                    </MudItem>
+                }
             }
-    </MudSelect>
-    <MudButton > Submit</MudButton>
-    <MudIconButton>Exit</MudIconButton>
-</MudPopover>
-
-@if (MenuList != null && MenuList.Any() && testing)
-{
-    foreach (MenuModel food in MenuList)
-    {
-        @if (!food.AreaName.Equals(CurrentArea) || PrintCount == 0)
-        {
-            <MudText Typo="Typo.h3" Style="margin-left: 10px; text-decoration: underline; padding-top:20px;">@(food != null ? food.AreaName : "Park not found - Area")</MudText>
 
         }
-        @if (!food.LocationName.Equals(CurrentLocation) || PrintCount == 0)
-        {
-            <MudText Typo="Typo.h4" Style="margin-left: 30px;">@(food != null ? food.LocationName : "Park not found - Loc")</MudText>
-        }
-        <MudText Typo="Typo.h5" Style="margin-left: 50px;">@food.FoodName - $@food.Price </MudText>
-        @if (true)
-        {
-            PrintCount++;
-            CurrentLocation = food.LocationName;
-            CurrentArea = food.AreaName;
-        }
-
-
     }
-}
+
+
+
+
+</MudGrid>
+
+
+
 @code {
     // Main Menu Data structure 
-    List<MenuModel> MenuList = new List<MenuModel>();
+    ParkModel ParkMenu = new ParkModel();
+    ParkModel OriginalParkMenu = new ParkModel();
+
     // Used for filters 
     List<string> AreaList = new List<string>();
     List<string> LocationList = new List<string>();
@@ -71,19 +110,15 @@
     // Runs on page intialization, queries database to gather menu and filtering data 
     protected override async Task OnInitializedAsync()
     {
+        // Filtering Data 
         AreaList = await _dbArea.GetAllAreas(ParkName);
         LocationList = await _dbLocation.GetLocations(ParkName);
         TagList = await _dbTag.GetTags();
         AllergyList = await _dbAllergy.GetAllergies();
-        MenuList = await _dbMenu.GetParkMenuData(ParkName);
+        // Build Menu
+        OriginalParkMenu = await _dbPark.GetParkMenuAsync(ParkName);
+        ParkMenu = OriginalParkMenu;
 
-        if (MenuList != null && MenuList.Count > 0)
-        {
-            Menu = MenuList.First();
-            CurrentArea = Menu.AreaName;
-            CurrentLocation = Menu.LocationName;
-            PrintCount = 0;
-        }
     }
     // Control Pop over for filter
     public void ToggleFilterPopover()
@@ -95,4 +130,67 @@
         }
         FilterPopover = true;
     }
+    public void UpdateMenu()
+    {
+        // Copy the original ParkMenu to apply filters without querying the database again
+        ParkMenu = new ParkModel
+            {
+                ParkName = OriginalParkMenu.ParkName,
+                Description = OriginalParkMenu.Description,
+                Areas = new List<AreaModel>(OriginalParkMenu.Areas.Select(a => new AreaModel
+                {
+                    AreaName = a.AreaName,
+                    Locations = new List<LocationModel>(a.Locations)
+                }))
+            };
+
+        // Apply Area Filter
+        if (AreaFilters.Any())
+        {
+            ParkMenu.Areas = ParkMenu.Areas
+                .Where(area => AreaFilters.Contains(area.AreaName))
+                .ToList();
+        }
+
+        // Apply Location Filter
+        foreach (var area in ParkMenu.Areas.ToList())
+        {
+            if (LocationFilters.Any())
+            {
+                area.Locations = area.Locations
+                    .Where(location => LocationFilters.Contains(location.LocationName))
+                    .ToList();
+            }
+
+            // Remove the area if it has no locations after filtering
+            if (!area.Locations.Any())
+            {
+                ParkMenu.Areas.Remove(area);
+            }
+        }
+
+        // Apply Tag and Allergy Filters
+        foreach (var area in ParkMenu.Areas)
+        {
+            foreach (var location in area.Locations.ToList())
+            {
+                location.Foods = location.Foods
+                    .Where(food =>
+                        (!TagFilters.Any() || TagFilters.Any(tag => food.Tags?.Contains(tag) == true)) &&
+                        (!AllergyFilters.Any() || AllergyFilters.Any(allergy => food.Allergies?.Contains(allergy) == true))
+                    ).ToList();
+
+                // Remove the location if it has no foods after filtering
+                if (!location.Foods.Any())
+                {
+                    area.Locations.Remove(location);
+                }
+            }
+        }
+
+        // Trigger UI update
+        StateHasChanged();
+        ToggleFilterPopover();
+    }
+
 }

@@ -8,5 +8,7 @@ namespace SQL_API.Data
         Task<List<FestivalModel>> GetFestivalData();
         Task insertFestival(FestivalModel festivalItem);
         Task UpdateFestival(FestivalModel festivalItem);
+        Task<List<FestivalModel>> GetFestivalSingle(string FestivalName);
+        Task<FestivalModel> GetFestivalMenuAsync(string FestivalName);
     }
 }

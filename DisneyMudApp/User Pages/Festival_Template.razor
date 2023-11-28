@@ -1,0 +1,152 @@
+﻿@page "/Festival/{FestivalName}"
+@using MudBlazor
+@using SQL_API
+@using SQL_API.Models
+@using SQL_API.Data
+@inject IFestivalData _dbFestival;
+@inject IParkData _dbPark;
+@inject IAreaData _dbArea;
+@inject IAllergyData _dbAllergy;
+@inject ITagData _dbTag;
+@inject ILocationData _dbLocation;
+
+<MudGrid Spacing="4">
+    <MudItem xs="12">
+        <MudText Typo="Typo.h2" Align="Align.Center">@(FestivalMenu != null ? FestivalMenu.FestivalName : "Festival not found")</MudText>
+        </MudItem>
+        <MudItem xs="12">
+            <MudText Typo="Typo.subtitle1">@(FestivalMenu != null ? FestivalMenu.Description : "Festival not found - desc")</MudText>
+        </MudItem>
+        <MudDivider Style="padding-bottom: 20px"></MudDivider>
+        <MudItem xs="12">
+            <MudFab Style="padding-bottom: 20px" Icon="@Icons.Filled.Filter" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleFilterPopover">Edit</MudFab>
+        </MudItem>
+        <MudItem xs="2">
+            <MudPopover Open="@FilterPopover" AnchorOrigin="Origin.TopLeft" TransformOrigin="Origin.BottomLeft">
+            <MudSelect T="string" Label="Locations" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="LocationFilters">
+                @foreach (String location in LocationList)
+                {
+                    <MudSelectItem T="string" Value="@location">@location</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="string" Label="Tags" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="TagFilters">
+                @foreach (String tag in TagList)
+                {
+                    <MudSelectItem T="string" Value="@tag">@tag</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="string" Label="Allergies" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="AllergyFilters">
+                @foreach (String allergy in AllergyList)
+                {
+                    <MudSelectItem T="string" Value="@allergy">@allergy</MudSelectItem>
+                }
+            </MudSelect>
+            <MudStack Row="true">
+                <MudButton OnClick="@ToggleFilterPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="@UpdateMenu">Submit</MudButton>
+            </MudStack>
+
+        </MudPopover>
+    </MudItem>
+
+
+
+    @if (FestivalMenu != null && FestivalMenu.Locations.Any())
+    {
+        @foreach (LocationModel location in FestivalMenu.Locations)
+        {
+            <MudItem xs="12">
+                <MudText Typo="Typo.h3" Style="margin-left: 30px;  text-decoration: underline;">@location.LocationName</MudText>
+            </MudItem>
+            @foreach (FoodModel food in location.Foods)
+            {
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h5" Style="margin-left: 50px;">@food.FoodName</MudText>
+                </MudItem>
+            }
+
+        }
+
+
+    }
+
+
+
+
+</MudGrid>
+
+
+
+@code {
+    // Main Menu Data structure
+    FestivalModel FestivalMenu = new FestivalModel();
+    FestivalModel OriginalFestivalMenu = new FestivalModel();
+
+    // Used for filters
+    List<string> LocationList = new List<string>();
+    List<string> TagList = new List<string>();
+    List<string> AllergyList = new List<string>();
+    private IEnumerable<string> LocationFilters { get; set; } = new HashSet<string>();
+    private IEnumerable<string> TagFilters { get; set; } = new HashSet<string>();
+    private IEnumerable<string> AllergyFilters { get; set; } = new HashSet<string>();
+    Boolean testing = true;
+    Boolean FilterPopover = false;
+    int PrintCount;
+    [Parameter] public string FestivalName { get; set; }
+    // Runs on page intialization, queries database to gather menu and filtering data
+    protected override async Task OnInitializedAsync()
+    {
+        // Filtering Data
+        LocationList = await _dbLocation.GetLocationsFestivals(FestivalName);
+        TagList = await _dbTag.GetTags();
+        AllergyList = await _dbAllergy.GetAllergies();
+        // Build Menu
+        OriginalFestivalMenu = await _dbFestival.GetFestivalMenuAsync(FestivalName);
+        FestivalMenu = OriginalFestivalMenu;
+
+    }
+    // Control Pop over for filter
+    public void ToggleFilterPopover()
+    {
+        if (FilterPopover)
+        {
+            FilterPopover = false;
+            return;
+        }
+        FilterPopover = true;
+    }
+    public void UpdateMenu()
+    {
+        // Copy the original ParkMenu to apply filters without querying the database again
+        FestivalMenu = OriginalFestivalMenu;
+
+        // Apply Location Filter
+        if (LocationFilters.Any())
+        {
+            FestivalMenu.Locations = FestivalMenu.Locations
+                .Where(location => LocationFilters.Contains(location.LocationName))
+                .ToList();
+        }
+
+        // Apply Tag and Allergy Filters
+        foreach (var location in FestivalMenu.Locations.ToList())
+        {
+            location.Foods = location.Foods
+                .Where(food =>
+                    (!TagFilters.Any() || TagFilters.Any(tag => food.Tags?.Contains(tag) == true)) &&
+                    (!AllergyFilters.Any() || AllergyFilters.Any(allergy => food.Allergies?.Contains(allergy) == true))
+                ).ToList();
+
+            // Remove the location if it has no foods after filtering
+            if (!location.Foods.Any())
+            {
+                FestivalMenu.Locations.Remove(location);
+            }
+        }
+
+        // Trigger UI update
+        StateHasChanged();
+        ToggleFilterPopover();
+    }
+
+}

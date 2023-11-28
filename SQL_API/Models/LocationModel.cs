@@ -12,6 +12,7 @@ namespace SQL_API.Models
         public string LocationName { get; set; } = "";
         public string FestivalName { get; set; } = "";
         public string AreaName { get; set; }
+        public List<FoodModel> Foods { get; set; }
         public LocationModel() { } 
         public LocationModel(int id, string locationName, string festivalName, string areaName)
         {

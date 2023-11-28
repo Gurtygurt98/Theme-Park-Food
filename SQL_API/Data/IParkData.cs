@@ -9,5 +9,6 @@ namespace SQL_API.Data
         Task insertPark(ParkModel parkItem);
         Task UpdatePark(ParkModel parkItem);
         Task<List<ParkModel>> GetParkSingle(string ParkName);
+        Task<ParkModel> GetParkMenuAsync(string ParkName);
     }
 }

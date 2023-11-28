@@ -30,11 +30,14 @@
         <MudText Typo="Typo.h2" >Festivals</MudText>
         @if (FestivalList.Any())
         {
+            <MudStack>
+
             @foreach(FestivalModel festival in FestivalList)
             {
-               <MudText Typo="Typo.h4" >@festival.FestivalName</MudText>
-                <MudDivider></MudDivider>
+                <MudLink Typo="Typo.h4" Href="@LinkToFestival(festival)" Color="Color.Primary">@festival.FestivalName</MudLink>
             }
+            </MudStack>
+
         }
     </MudItem>
 </MudGrid>
@@ -65,5 +68,9 @@
     private string LinkToPark(ParkModel park)
     {
         return $"/Parks/{park.ParkName}";
+    }
+    private string LinkToFestival(FestivalModel festival)
+    {
+        return $"/Festival/{festival.FestivalName}";
     }
 }

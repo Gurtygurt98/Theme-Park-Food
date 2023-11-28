@@ -45,5 +45,12 @@ namespace SQL_API.Data
                 WHERE Area.ParkName = @ParkName;";
             return _db.LoadData<String>(sql, new { ParkName });
         }
+        public Task<List<String>> GetLocationsFestivals(string FestivalName)
+        {
+            string sql = @"SELECT Location.LocationName 
+                FROM Location 
+                WHERE Location.FestivalName = @FestivalName;";
+            return _db.LoadData<String>(sql, new { FestivalName });
+        }
     }
 }

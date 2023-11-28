@@ -9,5 +9,6 @@ namespace SQL_API.Data
         Task<List<string>> GetLocations(string ParkName);
         Task insertLocation(LocationModel locationItem);
         Task UpdateLocation(LocationModel locationItem);
+        Task<List<String>> GetLocationsFestivals(string FestivalName);
     }
 }
