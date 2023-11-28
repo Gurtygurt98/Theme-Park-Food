@@ -4,92 +4,104 @@
 @using SQL_API.Data
 @using SQL_API.Models
 @inject ITagData _db;
+@inject IJSRuntime JSRuntime
+
 <MudText Typo="Typo.h2">Tag Data</MudText>
 
-@*Edit Delete Pop over *@
-<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
-    <MudForm>
-        <MudGrid>
-            <MudItem xs="10">
-                <MudStack>
-                    <MudTextField Label="Tag Name" @bind-Value="TagName" />
-                    <MudTextField Label="Food Name" @bind-Value="FoodName" />
-                </MudStack>
-            </MudItem>
-        </MudGrid>
-    </MudForm>
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteTag">Delete</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateTag">Update</MudButton>
-    </MudButtonGroup>
-</MudPopover>
-
-
-@* Datagrid for all data in the parks database *@
-@if (TagList.Any())
+@if (IsAdmin)
 {
-    <MudDataGrid Items="TagList" Virtualize="true" Striped="true">
-        <Columns>
-            <PropertyColumn Property="x => x.ID" Title="ID" />
-            <PropertyColumn Property="x => x.TagName" Title="Tag Name" />
-            <PropertyColumn Property="x => x.FoodName" Title="Food Name" />
-            <TemplateColumn>
-                <CellTemplate>
-                    <MudStack Row>
-                     @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
-                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditTag(context.Item)">Edit</MudIconButton>
-                 </MudStack>
-             </CellTemplate>
-         </TemplateColumn>
-     </Columns>
- </MudDataGrid>
+    <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+        <MudForm>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudTextField Label="Tag Name" @bind-Value="TagName" />
+                        <MudTextField Label="Food Name" @bind-Value="FoodName" />
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteTag">Delete</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateTag">Update</MudButton>
+        </MudButtonGroup>
+    </MudPopover>
 
+    @if (TagList.Any())
+    {
+        <MudDataGrid Items="TagList" Virtualize="true" Striped="true">
+            <Columns>
+                <PropertyColumn Property="x => x.ID" Title="ID" />
+                <PropertyColumn Property="x => x.TagName" Title="Tag Name" />
+                <PropertyColumn Property="x => x.FoodName" Title="Food Name" />
+                <TemplateColumn>
+                    <CellTemplate>
+                        <MudStack Row>
+                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditTag(context.Item)">Edit</MudIconButton>
+                     </MudStack>
+                 </CellTemplate>
+             </TemplateColumn>
+         </Columns>
+     </MudDataGrid>
+    }
 }
+else
+{
+    <MudText Typo="Typo.h3">Unauthorized Access</MudText>
+    <MudLink Typo="Typo.h4" Href="/" Color="Color.Primary">Return to Home</MudLink>
+}
+
 @code {
-    // Variable declaration
     bool isOpenEdit = false;
     int ID;
     string? TagName = "";
     string? FoodName = "";
     List<TagModel> TagList = new List<TagModel>();
-    // Loads the ParkList with data from the park database
+    private bool IsAdmin = false;
+
     protected override async Task OnInitializedAsync()
     {
         TagList = await _db.GetTagData();
     }
-    // Toggless the Edit Popover
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "adminToken");
+            IsAdmin = token == "ThemeParkBites";
+            StateHasChanged();
+        }
+    }
+
     public void ToggleEditPopover()
     {
         ResetInputs();
-        if (isOpenEdit)
-        {
-            isOpenEdit = false;
-            return;
-        }
-        isOpenEdit = true;
+        isOpenEdit = !isOpenEdit;
     }
+
     public void ResetInputs()
     {
         TagName = "";
         FoodName = "";
     }
+
     public void EditTag(TagModel item)
     {
-        // Create method based on DataGrid webpage example with a pop up to edit information about the
-
         ToggleEditPopover();
         ID = item.ID;
         TagName = item.TagName;
         FoodName = item.FoodName;
     }
-    // Called by the Delete Festival button that is on each edit popover
+
     public async Task DeleteTag()
     {
         await _db.DeleteTag(new TagModel(ID, TagName, FoodName));
         ToggleEditPopover();
         TagList = await _db.GetTagData();
     }
+
     public async Task UpdateTag()
     {
         await _db.UpdateTag(new TagModel(ID, TagName, FoodName));
@@ -97,4 +109,3 @@
         TagList = await _db.GetTagData();
     }
 }
-

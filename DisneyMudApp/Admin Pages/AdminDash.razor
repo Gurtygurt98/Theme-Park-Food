@@ -1,0 +1,67 @@
+﻿@page "/AdminDashboard"
+@using DisneyMudApp
+@using MudBlazor
+@using SQL_API.Data
+@using SQL_API.Models
+@inject IJSRuntime JSRuntime
+
+<MudText Typo="Typo.h2" Align="Align.Left">Admin Dashboard</MudText>
+
+@if (IsAdmin)
+{
+    <MudGrid>
+        <MudItem xs="6">
+            <MudStack>
+                <MudLink Typo="Typo.h4" Href="AllergyAdmin" Color="Color.Primary" Target="_blank">Allergy Admin</MudLink>
+                <MudLink Typo="Typo.h4" Href="AreaAdmin" Color="Color.Primary" Target="_blank">Area Admin</MudLink>
+                <MudLink Typo="Typo.h4" Href="FestivalAdmin" Color="Color.Primary" Target="_blank">Festival Admin</MudLink>
+                <MudLink Typo="Typo.h4" Href="FoodAdmin" Color="Color.Primary" Target="_blank">Food Admin</MudLink>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="6">
+
+            <MudStack>
+                <MudLink Typo="Typo.h4" Href="LocationAdmin" Color="Color.Primary" Target="_blank">Location Admin</MudLink>
+                <MudLink Typo="Typo.h4" Href="ParkAdmin" Color="Color.Primary" Target="_blank">Park Admin</MudLink>
+                <MudLink Typo="Typo.h4" Href="TagAdmin" Color="Color.Primary" Target="_blank">Tag Admin</MudLink>
+            </MudStack>
+        </MudItem>
+
+
+    </MudGrid>
+}
+else
+{
+    <MudTextField @bind-Value="enteredToken" Label="Enter Admin Token" Error="@InvalidToken"/>
+    <MudButton OnClick="@VerifyToken">Submit</MudButton>
+}
+
+@code {
+    private bool IsAdmin = false;
+    private string enteredToken;
+    private Boolean InvalidToken = false;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "adminToken");
+            IsAdmin = token == "ThemeParkBites";
+            StateHasChanged(); // Re-render the component with updated state
+        }
+    }
+
+    private async Task VerifyToken()
+    {
+        if (enteredToken == "ThemeParkBites")
+        {
+            InvalidToken = false;
+
+            IsAdmin = true;
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "adminToken", enteredToken);
+        }
+        else
+        {
+            InvalidToken = true;            
+        }
+    }
+}

@@ -5,13 +5,16 @@
 @using SQL_API.Models
 @inject IAreaData _db;
 @inject IParkData _dbParks;
+@inject IJSRuntime JSRuntime
 <MudText Typo="Typo.h2">Area Data</MudText>
 @* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
-<MudToolBar>
-    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
-</MudToolBar>
-@*Add Pop over *@
-<MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter" MinHeight="700px" MinWidth="700px" Width="" Height="50%">
+@if (IsAdmin)
+{
+    <MudToolBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
+    </MudToolBar>
+    @*Add Pop over *@
+    <MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter" MinHeight="700px" MinWidth="700px" Width="" Height="50%">
         <MudForm>
             <MudGrid>
                 <MudItem xs="10">
@@ -22,7 +25,7 @@
                                 <MudSelectItem Value="@(parks)" />
                             }
                         </MudSelect>
-                        <MudTextField Label="Area Name" @bind-Value="AreaName"/>
+                        <MudTextField Label="Area Name" @bind-Value="AreaName" />
                     </MudStack>
                 </MudItem>
             </MudGrid>
@@ -31,51 +34,59 @@
             <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddArea">Submit</MudButton>
         </MudButtonGroup>
-</MudPopover>
-@*Edit Delete Pop over *@
-<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter">
-    <MudForm>
-        <MudGrid>
-            <MudItem xs="10">
-                <MudStack>
-                    <MudSelect @bind-Value="ParkItem" T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
-                        @foreach (ParkModel parks in ParkList)
-                        {
-                            <MudSelectItem Value="@(parks)" />
-                        }
-                    </MudSelect>
-                    <MudTextField Label="Area Name" @bind-Value="AreaName" />
-                </MudStack>
-            </MudItem>
-s        </MudGrid>
-    </MudForm>
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteArea">Delete</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateArea">Update</MudButton>
-    </MudButtonGroup>
-</MudPopover>
+    </MudPopover>
+    @*Edit Delete Pop over *@
+    <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.CenterCenter">
+        <MudForm>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudSelect @bind-Value="ParkItem" T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                            @foreach (ParkModel parks in ParkList)
+                            {
+                                <MudSelectItem Value="@(parks)" />
+                            }
+                        </MudSelect>
+                        <MudTextField Label="Area Name" @bind-Value="AreaName" />
+                    </MudStack>
+                </MudItem>
+                s
+            </MudGrid>
+        </MudForm>
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteArea">Delete</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateArea">Update</MudButton>
+        </MudButtonGroup>
+    </MudPopover>
 
-@* Datagrid for all data in the parks database *@
-@if (AreaList.Any())
-{
-    <MudDataGrid Items="AreaList" Virtualize="true" Striped="true">
-        <Columns>
-            <PropertyColumn Property="x => x.ID" Title="ID" />
-            <PropertyColumn Property="x => x.AreaName" Title="Area Name" />
-            <PropertyColumn Property="x => x.ParkName" Title="Park Name" />
-            <TemplateColumn>
-                <CellTemplate>
-                    <MudStack Row>
-                     @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
-                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditArea(context.Item)">Edit</MudIconButton>
-                 </MudStack>
-             </CellTemplate>
-         </TemplateColumn>
-     </Columns>
- </MudDataGrid>
+    @* Datagrid for all data in the parks database *@
+    @if (AreaList.Any())
+    {
+        <MudDataGrid Items="AreaList" Virtualize="true" Striped="true">
+            <Columns>
+                <PropertyColumn Property="x => x.ID" Title="ID" />
+                <PropertyColumn Property="x => x.AreaName" Title="Area Name" />
+                <PropertyColumn Property="x => x.ParkName" Title="Park Name" />
+                <TemplateColumn>
+                    <CellTemplate>
+                        <MudStack Row>
+                         @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
+                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditArea(context.Item)">Edit</MudIconButton>
+                     </MudStack>
+                 </CellTemplate>
+             </TemplateColumn>
+         </Columns>
+     </MudDataGrid>
 
+    }
 }
+else
+{
+    <MudText Typo="Typo.h3">Please click the below link to access admin pages</MudText>
+    <MudLink Typo="Typo.h4" Href="/AdminDashboard" Color="Color.Primary" Target="_blank">Dashboard</MudLink>
+}
+
 
 @code {
     // Variable declaration
@@ -85,6 +96,8 @@ s        </MudGrid>
     ParkModel ParkItem;
     string? ParkName = "";
     string? AreaName = "";
+    Boolean IsAdmin = false;
+
     List<AreaModel> AreaList= new();
     List<ParkModel> ParkList = new List<ParkModel>();
     // Loads the ParkList with data from the park database
@@ -92,6 +105,17 @@ s        </MudGrid>
     {
         ParkList = await _dbParks.GetParkData();
         AreaList = await _db.GetAreaData();
+    }
+    // Checks if the user has entered a valid admin code 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "adminToken");
+            IsAdmin = token == "ThemeParkBites";
+            StateHasChanged(); // Re-render the component with updated state@inject IJSRuntime JSRuntime
+
+        }
     }
     // Toggles the Add Popover
     public void ToggleAddPopover()

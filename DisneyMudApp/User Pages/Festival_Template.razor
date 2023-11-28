@@ -19,34 +19,38 @@
         </MudItem>
         <MudDivider Style="padding-bottom: 20px"></MudDivider>
         <MudItem xs="12">
-            <MudFab Style="padding-bottom: 20px" Icon="@Icons.Filled.Filter" Size="Size.Large" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleFilterPopover">Edit</MudFab>
+            <MudToggleIconButton Style="padding-bottom: 20px" Icon="@Icons.Outlined.FilterAlt" Color="Color.Primary" @onclick="@ToggleFilterPopover">Edit</MudToggleIconButton>
         </MudItem>
-        <MudItem xs="2">
-            <MudPopover Open="@FilterPopover" AnchorOrigin="Origin.TopLeft" TransformOrigin="Origin.BottomLeft">
-            <MudSelect T="string" Label="Locations" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="LocationFilters">
-                @foreach (String location in LocationList)
-                {
-                    <MudSelectItem T="string" Value="@location">@location</MudSelectItem>
-                }
-            </MudSelect>
-            <MudSelect T="string" Label="Tags" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="TagFilters">
-                @foreach (String tag in TagList)
-                {
-                    <MudSelectItem T="string" Value="@tag">@tag</MudSelectItem>
-                }
-            </MudSelect>
-            <MudSelect T="string" Label="Allergies" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="AllergyFilters">
-                @foreach (String allergy in AllergyList)
-                {
-                    <MudSelectItem T="string" Value="@allergy">@allergy</MudSelectItem>
-                }
-            </MudSelect>
-            <MudStack Row="true">
-                <MudButton OnClick="@ToggleFilterPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="@UpdateMenu">Submit</MudButton>
-            </MudStack>
-
-        </MudPopover>
+        <MudItem xs="12">
+            @if (FilterPopover)
+        {
+            <div style="padding-left:10px">
+                <MudSelect T="string" Label="Locations" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="LocationFilters">
+                    @foreach (String location in LocationList)
+                    {
+                        <MudSelectItem T="string" Value="@location">@location</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" Label="Tags" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="TagFilters">
+                    @foreach (String tag in TagList)
+                    {
+                        <MudSelectItem T="string" Value="@tag">@tag</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="string" Label="Allergies" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="AllergyFilters">
+                    @foreach (String allergy in AllergyList)
+                    {
+                        <MudSelectItem T="string" Value="@allergy">@allergy</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudDivider>
+                </MudDivider>
+                <MudStack Row="true">
+                    <MudButton OnClick="@ToggleFilterPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="@UpdateMenu">Submit</MudButton>
+                </MudStack>
+            </div>
+        }
     </MudItem>
 
 

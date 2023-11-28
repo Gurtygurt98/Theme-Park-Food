@@ -4,59 +4,80 @@
 @using SQL_API.Data
 @using SQL_API.Models
 @inject IAllergyData _db;
+@inject IJSRuntime JSRuntime
 <MudText Typo="Typo.h2">Allergy Data</MudText>
-
-@*Edit Delete Pop over *@
-<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
-    <MudForm>
-        <MudGrid>
-            <MudItem xs="10">
-                <MudStack>
-                    <MudTextField Label="Allergy Name" @bind-Value="AllergyName" />
-                    <MudTextField Label="Food Name" @bind-Value="FoodName" />
-                </MudStack>
-            </MudItem>
-        </MudGrid>
-    </MudForm>
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteAllergy">Delete</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateAllergy">Update</MudButton>
-    </MudButtonGroup>
-</MudPopover>
-
-
-@* Datagrid for all data in the parks database *@
-@if (AllergyList.Any())
+@if (IsAdmin)
 {
-    <MudDataGrid Items="AllergyList" Virtualize="true" Striped="true">
-        <Columns>
-            <PropertyColumn Property="x => x.ID" Title="ID" />
-            <PropertyColumn Property="x => x.AllergyName" Title="Allergy Name" />
-            <PropertyColumn Property="x => x.FoodName" Title="Food Name" />
-            <TemplateColumn>
-                <CellTemplate>
-                    <MudStack Row>
-                     @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
-                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditAllergy(context.Item)">Edit</MudIconButton>
-                 </MudStack>
-             </CellTemplate>
-         </TemplateColumn>
-     </Columns>
- </MudDataGrid>
+    @*Edit Delete Pop over *@
+    <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+        <MudForm>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudTextField Label="Allergy Name" @bind-Value="AllergyName" />
+                        <MudTextField Label="Food Name" @bind-Value="FoodName" />
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteAllergy">Delete</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateAllergy">Update</MudButton>
+        </MudButtonGroup>
+    </MudPopover>
+
+
+    @* Datagrid for all data in the parks database *@
+    @if (AllergyList.Any())
+    {
+        <MudDataGrid Items="AllergyList" Virtualize="true" Striped="true">
+            <Columns>
+                <PropertyColumn Property="x => x.ID" Title="ID" />
+                <PropertyColumn Property="x => x.AllergyName" Title="Allergy Name" />
+                <PropertyColumn Property="x => x.FoodName" Title="Food Name" />
+                <TemplateColumn>
+                    <CellTemplate>
+                        <MudStack Row>
+                         @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
+                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditAllergy(context.Item)">Edit</MudIconButton>
+                     </MudStack>
+                 </CellTemplate>
+             </TemplateColumn>
+         </Columns>
+     </MudDataGrid>
+
+    }
+} 
+else
+{
+    <MudText Typo="Typo.h3">Please click the below link to access admin pages</MudText>
+    <MudLink Typo="Typo.h4" Href="/AdminDashboard" Color="Color.Primary" Target="_blank">Dashboard</MudLink>
 
 }
+
 @code {
     // Variable declaration
     bool isOpenEdit = false;
     int ID;
     string? AllergyName = "";
     string? FoodName = "";
+    Boolean IsAdmin = false;
     List<AllergyModel> AllergyList = new List<AllergyModel>();
     // Loads the ParkList with data from the park database
     protected override async Task OnInitializedAsync()
     {
         AllergyList = await _db.GetAllergyData();
+    }
+    // Checks if the user has entered a valid admin code
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "adminToken");
+            IsAdmin = token == "ThemeParkBites";
+            StateHasChanged(); // Re-render the component with updated state
+        }
     }
     // Toggless the Edit Popover
     public void ToggleEditPopover()

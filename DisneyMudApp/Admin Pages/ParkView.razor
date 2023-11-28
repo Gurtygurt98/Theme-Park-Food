@@ -4,30 +4,16 @@
 @using SQL_API.Data
 @using SQL_API.Models
 @inject IParkData _db;
+@inject IJSRuntime JSRuntime
+
 <MudText Typo="Typo.h2">Park Data</MudText>
-@* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
-<MudToolBar>
-    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
-</MudToolBar>
-@*Add Pop over *@
-<MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
-    <MudForm>
-        <MudGrid>
-            <MudItem xs="10">
-                <MudStack>
-                    <MudTextField Label="Park Name" @bind-Value="ParkName" />
-                    <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
-                </MudStack>
-            </MudItem>
-        </MudGrid>
-    </MudForm>
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddPark">Submit</MudButton>
-    </MudButtonGroup>
-</MudPopover>
-@*Edit Delete Pop over *@
-<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+
+@if (IsAdmin)
+{
+    <MudToolBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
+    </MudToolBar>
+    <MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
         <MudForm>
             <MudGrid>
                 <MudItem xs="10">
@@ -38,47 +24,76 @@
                 </MudItem>
             </MudGrid>
         </MudForm>
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddPark">Submit</MudButton>
+        </MudButtonGroup>
+    </MudPopover>
+    <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+        <MudForm>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudTextField Label="Park Name" @bind-Value="ParkName" />
+                        <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeletePark">Delete</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdatePark">Update</MudButton>
-    </MudButtonGroup>
-</MudPopover>
-
-@* Datagrid for all data in the parks database *@
-@if (ParkList.Any())
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdatePark">Update</MudButton>
+        </MudButtonGroup>
+    </MudPopover>
+    @if (ParkList.Any())
+    {
+        <MudDataGrid Items="ParkList" Virtualize="true" Striped="true">
+            <Columns>
+                <PropertyColumn Property="x => x.ID" Title="ID" />
+                <PropertyColumn Property="x => x.ParkName" Title="Park Name" />
+                <PropertyColumn Property="x => x.Description" Title="Description" />
+                <TemplateColumn>
+                    <CellTemplate>
+                        <MudStack Row>
+                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditPark(context.Item)">Edit</MudIconButton>
+                     </MudStack>
+                 </CellTemplate>
+             </TemplateColumn>
+         </Columns>
+     </MudDataGrid>
+    }
+}
+else
 {
-    <MudDataGrid Items="ParkList" Virtualize="true" Striped="true">
-        <Columns>
-            <PropertyColumn Property="x => x.ID" Title="ID" />
-            <PropertyColumn Property="x => x.ParkName" Title="Park Name" />
-            <PropertyColumn Property="x => x.Description" Title="Description" />
-            <TemplateColumn>
-                <CellTemplate>
-                    <MudStack Row>
-                    @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditPark(context.Item)">Edit</MudIconButton>
-                </MudStack>
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid>
-
+    <MudText Typo="Typo.h3">Unauthorized Access</MudText>
+    <MudLink Typo="Typo.h4" Href="/" Color="Color.Primary">Return to Home</MudLink>
 }
 
 @code {
-    // Variable declaration
     bool isOpenAdd = false;
     bool isOpenEdit = false;
     int id;
     string? ParkName = "";
     string? Description = "";
     List<ParkModel> ParkList = new();
-    // Loads the ParkList with data from the park database
+    private bool IsAdmin = false;
+
     protected override async Task OnInitializedAsync()
     {
         ParkList = await _db.GetParkData();
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "adminToken");
+            IsAdmin = token == "ThemeParkBites";
+            StateHasChanged();
+        }
+    }
+
     // Toggles the Add Popover
     public void ToggleAddPopover()
     {

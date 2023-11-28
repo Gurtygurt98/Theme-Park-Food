@@ -5,99 +5,114 @@
 @using SQL_API.Models
 @inject IParkData _dbParks;
 @inject IFestivalData _db;
-<MudText Typo="Typo.h2">Festival Data</MudText>
-@* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
-<MudToolBar>
-    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
-</MudToolBar>
-@*Add Pop over *@
-<MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
-    <MudForm >
-        <MudGrid>
-            <MudItem xs="10">
-                <MudStack>
-                    <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
-                    <MudSelect @bind-Value="ParkItem"  T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
-                        @foreach (ParkModel parks in ParkList)
-                    {
-                        <MudSelectItem Value="@(parks)" />
-                    }
-                    </MudSelect>
-                    <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
-                </MudStack>
-            </MudItem>
-            <MudItem xs="4">
-                <MudDatePicker AutoClose="@true" Editable="true" Label="Start Date" @bind-Date="StartDate" />
-            </MudItem>
-            <MudItem xs="4">
-                <MudDatePicker AutoClose="@true" Editable="true" Label="End Date" @bind-Date="EndDate" />
-            </MudItem>
-        </MudGrid>
-    </MudForm>
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddFestival">Submit</MudButton>
-    </MudButtonGroup>
-</MudPopover>
-@*Edit Delete Pop over *@
-<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+@inject IJSRuntime JSRuntime
 
-    <MudForm>
-        <MudGrid>
-            <MudItem xs="10">
-                <MudStack>
-                    <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
-                    <MudSelect @bind-Value="ParkItem" T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
-                        @foreach (ParkModel parks in ParkList)
-                        {
-                            <MudSelectItem Value="@(parks)" />
-                        }
-                    </MudSelect>
-                    <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
-                </MudStack>
-            </MudItem>
-            <MudItem xs="4">
-                <MudDatePicker AutoClose="@true" Editable="true" Label="Start Date" @bind-Date="StartDate" />
-            </MudItem>
-            <MudItem xs="4">
-                <MudDatePicker AutoClose="@true" Editable="true" Label="End Date" @bind-Date="EndDate" />
-            </MudItem>
-        </MudGrid>
-    </MudForm>
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteFestival">Delete</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateFestival">Update</MudButton>
-    </MudButtonGroup>
-</MudPopover>
-@* Datagrid for all data in the festivals *@
-@if(FestivalList.Any())
+<MudText Typo="Typo.h2">Festival Data</MudText>
+@if (IsAdmin)
 {
-    <MudDataGrid Items="FestivalList" Virtualize="true" Striped="true">
-    <Columns>
-        <PropertyColumn Property="x => x.ID" Title="ID" />
-        <PropertyColumn Property="x => x.FestivalName" Title="Festival Name" />
-            <PropertyColumn Property="x => x.ParkName" Title="Park" />
-        <PropertyColumn Property="x => x.StartDate" Title="Start" />
-        <PropertyColumn Property="x => x.EndDate" Title="End" />
-        <PropertyColumn Property="x => x.Description" Title="Description"/>
-        <TemplateColumn >
-            <CellTemplate>
-                <MudStack Row>
-                     @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
-                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditFestival(context.Item)">Edit</MudIconButton>
-                </MudStack>
-            </CellTemplate>
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid>
+    @* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
+    <MudToolBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
+    </MudToolBar>
+    @*Add Pop over *@
+    <MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+        <MudForm>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
+                        <MudSelect @bind-Value="ParkItem" T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                            @foreach (ParkModel parks in ParkList)
+                            {
+                                <MudSelectItem Value="@(parks)" />
+                            }
+                        </MudSelect>
+                        <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
+                    </MudStack>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudDatePicker AutoClose="@true" Editable="true" Label="Start Date" @bind-Date="StartDate" />
+                </MudItem>
+                <MudItem xs="4">
+                    <MudDatePicker AutoClose="@true" Editable="true" Label="End Date" @bind-Date="EndDate" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddFestival">Submit</MudButton>
+        </MudButtonGroup>
+    </MudPopover>
+    @*Edit Delete Pop over *@
+    <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+
+        <MudForm>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+                        <MudTextField Label="Festival Name" @bind-Value="FestivalName" />
+                        <MudSelect @bind-Value="ParkItem" T="ParkModel" Label="Park List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                            @foreach (ParkModel parks in ParkList)
+                            {
+                                <MudSelectItem Value="@(parks)" />
+                            }
+                        </MudSelect>
+                        <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
+                    </MudStack>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudDatePicker AutoClose="@true" Editable="true" Label="Start Date" @bind-Date="StartDate" />
+                </MudItem>
+                <MudItem xs="4">
+                    <MudDatePicker AutoClose="@true" Editable="true" Label="End Date" @bind-Date="EndDate" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteFestival">Delete</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateFestival">Update</MudButton>
+        </MudButtonGroup>
+    </MudPopover>
+    @* Datagrid for all data in the festivals *@
+    @if (FestivalList.Any())
+    {
+        <MudDataGrid Items="FestivalList" Virtualize="true" Striped="true">
+            <Columns>
+                <PropertyColumn Property="x => x.ID" Title="ID" />
+                <PropertyColumn Property="x => x.FestivalName" Title="Festival Name" />
+                <PropertyColumn Property="x => x.ParkName" Title="Park" />
+                <PropertyColumn Property="x => x.StartDate" Title="Start" />
+                <PropertyColumn Property="x => x.EndDate" Title="End" />
+                <PropertyColumn Property="x => x.Description" Title="Description" />
+                <TemplateColumn>
+                    <CellTemplate>
+                        <MudStack Row>
+                         @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
+                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditFestival(context.Item)">Edit</MudIconButton>
+                     </MudStack>
+                 </CellTemplate>
+             </TemplateColumn>
+         </Columns>
+     </MudDataGrid>
+
+    }
+}
+else
+{
+    <MudText Typo="Typo.h3">Please click the below link to access admin pages</MudText>
+    <MudLink Typo="Typo.h4" Href="/AdminDashboard" Color="Color.Primary" Target="_blank">Dashboard</MudLink>
 
 }
+
+
 
 @code {
     // Variable declaration 
     bool isOpenAdd = false;
     bool isOpenEdit = false;
+    Boolean IsAdmin = false;
+
     // Festival Model Data
     int id;
     ParkModel ParkItem;
@@ -113,6 +128,16 @@
     {
         ParkList = await _dbParks.GetParkData();
         FestivalList = await _db.GetFestivalData();
+    }
+    // Checks if the user has entered a valid admin code
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "adminToken");
+            IsAdmin = token == "ThemeParkBites";
+            StateHasChanged(); // Re-render the component with updated state
+        }
     }
     // Toggles the Add Popover 
     public void ToggleAddPopover()

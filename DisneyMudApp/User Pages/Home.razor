@@ -11,16 +11,14 @@
     @*parks*@
     <MudItem xs="12" >
         <MudText Typo="Typo.h3" >Parks</MudText>
-        @if (FestivalList.Any())
+        @if (ParksList.Any())
         {
             
 
             <MudStack>
-
-            
             @foreach (ParkModel park in ParksList)
             {
-                <MudLink Typo="Typo.h4" Href="@LinkToPark(park)" Color="Color.Primary"> @park.ParkName</MudLink>
+                    <MudLink Typo="Typo.h4" Href="@LinkToPark(park)" Color="Color.Primary" Target="_blank"> @park.ParkName</MudLink>
             }
             </MudStack>
             
@@ -34,13 +32,19 @@
 
             @foreach(FestivalModel festival in FestivalList)
             {
-                <MudLink Typo="Typo.h4" Href="@LinkToFestival(festival)" Color="Color.Primary">@festival.FestivalName</MudLink>
+                    <MudLink Typo="Typo.h4" Href="@LinkToFestival(festival)" Color="Color.Primary" Target="_blank">@festival.FestivalName</MudLink>
             }
             </MudStack>
 
         }
     </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h3">Admin</MudText>
+        <MudLink Typo="Typo.h4" Href="/AdminDashboard" Color="Color.Primary" Target="_blank">Dashboard</MudLink>
+
+    </MudItem>
 </MudGrid>
+
 
 
 @code {
@@ -53,7 +57,6 @@
         // Call methods to get festivals and parks that are in the database, will be used 
         CreateFestivalList();
         CreateParkList();
-
     }
     // Get Park List, Queries the database 
     public async void CreateParkList()

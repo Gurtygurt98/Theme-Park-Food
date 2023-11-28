@@ -9,81 +9,18 @@
 @inject ILocationData _dbLocation;
 @inject IAllergyData _dbAllergy;
 @inject ITagData _dbTag;
+@inject IJSRuntime JSRuntime
 <MudText Typo="Typo.h2">Food Data</MudText>
-@* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
-<MudToolBar>
-    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
-</MudToolBar>
-@*Add Pop over *@
-<MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter" Square="true" Width="200px">
-    <MudGrid>
-        <MudItem xs="12">
-            <MudStack>
-
-                <MudTextField Label="Food Name" @bind-Value="FoodName" />
-                <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
-                <MudSelect @bind-Value="@LocationItem" T="LocationModel" Label="Locations" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
-                    @foreach (LocationModel location in LocationList)
-                    {
-                        <MudSelectItem Value="@(location)" />
-                    }
-                </MudSelect>
-
-                <MudSelect @bind-SelectedValues="@FoodTagList" T="string" Label="Tags" AnchorOrigin="Origin.BottomCenter" MultiSelection="@true">
-                    @foreach (string tags in TagList)
-                    {
-                        <MudSelectItem Value="@(tags)" />
-                    }
-                </MudSelect>
-                <MudSelect @bind-SelectedValues="@FoodAllergyList" T="string" Label="Allergies" AnchorOrigin="Origin.BottomCenter" MultiSelection="@true">
-                    @foreach (string allergies in AllergyList)
-                    {
-                        <MudSelectItem Value="@(allergies)" />
-                    }
-                </MudSelect>
-                <MudSelect @bind-Value="@Cuisine" T="string" Label="Cuisine List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
-                    @foreach (string cuisine in CuisineList)
-                    {
-                        <MudSelectItem Value="@(cuisine)" />
-                    }
-                </MudSelect>
-                <MudSelect @bind-Value="@FoodType" T="string" Label="Food Type" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
-                    @foreach (string foodtype in FoodTypeList)
-                    {
-                        <MudSelectItem Value="@(foodtype)" />
-                    }
-                </MudSelect>
-
-                <MudNumericField T="decimal" Culture="_en" Label="Price" @bind-Value="Price" />
-            </MudStack>
-        </MudItem>
-        <MudItem xs="12">
-            <MudToggleIconButton @bind-Toggled="isPerm" Icon="@Icons.Material.Filled.Update" ToggledIcon="@Icons.Material.Filled.UpdateDisabled"></MudToggleIconButton>
-        </MudItem>
-
-        @if (isPerm)
-        {
-            <MudItem xs="6">
-                <MudDatePicker AutoClose="@true" Editable="true" Label="Start Date" @bind-Date="StartDate" />
-            </MudItem>
-            <MudItem xs="6">
-                <MudDatePicker AutoClose="@true" Editable="true" Label="End Date" @bind-Date="EndDate" />
-            </MudItem>
-        }
-    </MudGrid>
-    @*Buttons to submit and close *@
-    <MudDivider></MudDivider>
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddFood">Submit</MudButton>
-    </MudButtonGroup>
-</MudPopover>
-@*Edit Delete Pop over *@
-<MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
-
-    <MudForm>
+@if (IsAdmin)
+{
+    @* Pop Over for adding a new item to the database. May change from mudicon button to a normal button with a better menu above the datagrid *@
+    <MudToolBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
+    </MudToolBar>
+    @*Add Pop over *@
+    <MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.TopCenter" TransformOrigin="Origin.TopCenter" Square="true" Width="200px">
         <MudGrid>
-            <MudItem xs="10">
+            <MudItem xs="12">
                 <MudStack>
 
                     <MudTextField Label="Food Name" @bind-Value="FoodName" />
@@ -123,54 +60,129 @@
                     <MudNumericField T="decimal" Culture="_en" Label="Price" @bind-Value="Price" />
                 </MudStack>
             </MudItem>
-            <MudItem xs="4">
-                <MudDatePicker Label="Start Date" @bind-Date="StartDate" />
+            <MudItem xs="12">
+                <MudToggleIconButton @bind-Toggled="isPerm" Icon="@Icons.Material.Filled.Update" ToggledIcon="@Icons.Material.Filled.UpdateDisabled"></MudToggleIconButton>
             </MudItem>
-            <MudItem xs="4">
-                <MudDatePicker Label="End Date" @bind-Date="EndDate" />
-            </MudItem>
-        </MudGrid>
-    </MudForm>
-    @*Buttons*@
-    <MudButtonGroup>
-        <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteFood">Delete</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateFood">Update</MudButton>
-    </MudButtonGroup>
-</MudPopover>
-@* Datagrid for all data in the Foods *@
-@if (FoodList.Any())
-{
-    <MudDataGrid Items="FoodList" Virtualize="true" Striped="true">
-        <Columns>
-            <TemplateColumn>
-                <CellTemplate>
-                    <MudStack Row>
-                     @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
-                     <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditFood(context.Item)">Edit</MudIconButton>
-                 </MudStack>
-             </CellTemplate>
-         </TemplateColumn>
-         <PropertyColumn Property="x => x.ID" Title="ID" />
-         <PropertyColumn Property="x => x.FoodName" Title="Food Name" />
-         <PropertyColumn Property="x => x.LocationName" Title="Location" />
-         <PropertyColumn Property="x => x.Price" Title="Price" />
-         <PropertyColumn Property="x => x.ImageUrl" Title="Image Url" />
-         <PropertyColumn Property="x => x.Cuisine" Title="Cuisine" />
-         <PropertyColumn Property="x => x.FoodType" Title="FoodType" />
-         <PropertyColumn Property="x => x.StartDate" Title="Start" />
-         <PropertyColumn Property="x => x.EndDate" Title="End" />
 
-     </Columns>
- </MudDataGrid>
+            @if (isPerm)
+            {
+                <MudItem xs="6">
+                    <MudDatePicker AutoClose="@true" Editable="true" Label="Start Date" @bind-Date="StartDate" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudDatePicker AutoClose="@true" Editable="true" Label="End Date" @bind-Date="EndDate" />
+                </MudItem>
+            }
+        </MudGrid>
+        @*Buttons to submit and close *@
+        <MudDivider></MudDivider>
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleAddPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddFood">Submit</MudButton>
+        </MudButtonGroup>
+    </MudPopover>
+    @*Edit Delete Pop over *@
+    <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
+
+        <MudForm>
+            <MudGrid>
+                <MudItem xs="10">
+                    <MudStack>
+
+                        <MudTextField Label="Food Name" @bind-Value="FoodName" />
+                        <MudTextField Label="Description" @bind-Value="Description" Lines="3" />
+                        <MudSelect @bind-Value="@LocationItem" T="LocationModel" Label="Locations" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                            @foreach (LocationModel location in LocationList)
+                            {
+                                <MudSelectItem Value="@(location)" />
+                            }
+                        </MudSelect>
+
+                        <MudSelect @bind-SelectedValues="@FoodTagList" T="string" Label="Tags" AnchorOrigin="Origin.BottomCenter" MultiSelection="@true">
+                            @foreach (string tags in TagList)
+                            {
+                                <MudSelectItem Value="@(tags)" />
+                            }
+                        </MudSelect>
+                        <MudSelect @bind-SelectedValues="@FoodAllergyList" T="string" Label="Allergies" AnchorOrigin="Origin.BottomCenter" MultiSelection="@true">
+                            @foreach (string allergies in AllergyList)
+                            {
+                                <MudSelectItem Value="@(allergies)" />
+                            }
+                        </MudSelect>
+                        <MudSelect @bind-Value="@Cuisine" T="string" Label="Cuisine List" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                            @foreach (string cuisine in CuisineList)
+                            {
+                                <MudSelectItem Value="@(cuisine)" />
+                            }
+                        </MudSelect>
+                        <MudSelect @bind-Value="@FoodType" T="string" Label="Food Type" AnchorOrigin="Origin.BottomCenter" MultiSelection="@false">
+                            @foreach (string foodtype in FoodTypeList)
+                            {
+                                <MudSelectItem Value="@(foodtype)" />
+                            }
+                        </MudSelect>
+
+                        <MudNumericField T="decimal" Culture="_en" Label="Price" @bind-Value="Price" />
+                    </MudStack>
+                </MudItem>
+                <MudItem xs="4">
+                    <MudDatePicker Label="Start Date" @bind-Date="StartDate" />
+                </MudItem>
+                <MudItem xs="4">
+                    <MudDatePicker Label="End Date" @bind-Date="EndDate" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+        @*Buttons*@
+        <MudButtonGroup>
+            <MudButton OnClick="@ToggleEditPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Large" OnClick="DeleteFood">Delete</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateFood">Update</MudButton>
+        </MudButtonGroup>
+    </MudPopover>
+    @* Datagrid for all data in the Foods *@
+    @if (FoodList.Any())
+    {
+        <MudDataGrid Items="FoodList" Virtualize="true" Striped="true">
+            <Columns>
+                <TemplateColumn>
+                    <CellTemplate>
+                        <MudStack Row>
+                         @* Change the delete function to prompt the user if they are sure they want to delete, also add an edit button that creates a pop up  *@
+                         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="() => EditFood(context.Item)">Edit</MudIconButton>
+                     </MudStack>
+                 </CellTemplate>
+             </TemplateColumn>
+             <PropertyColumn Property="x => x.ID" Title="ID" />
+             <PropertyColumn Property="x => x.FoodName" Title="Food Name" />
+             <PropertyColumn Property="x => x.LocationName" Title="Location" />
+             <PropertyColumn Property="x => x.Price" Title="Price" />
+             <PropertyColumn Property="x => x.ImageUrl" Title="Image Url" />
+             <PropertyColumn Property="x => x.Cuisine" Title="Cuisine" />
+             <PropertyColumn Property="x => x.FoodType" Title="FoodType" />
+             <PropertyColumn Property="x => x.StartDate" Title="Start" />
+             <PropertyColumn Property="x => x.EndDate" Title="End" />
+
+         </Columns>
+     </MudDataGrid>
+
+    }
+}
+else
+{
+    <MudText Typo="Typo.h3">Please click the below link to access admin pages</MudText>
+    <MudLink Typo="Typo.h4" Href="/AdminDashboard" Color="Color.Primary" Target="_blank">Dashboard</MudLink>
 
 }
+
 @code {
     // Variable declaration
     bool isOpenAdd = false;
     bool isOpenLocation = false;
     bool isOpenEdit = false;
     bool isPerm = false;
+    Boolean IsAdmin = false;
     string Allergy;
     string Tag;
     public List<FoodModel> FoodList = new();
@@ -207,7 +219,16 @@
       
 
     }
-
+    // Checks if the user has entered a valid admin code
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "adminToken");
+            IsAdmin = token == "ThemeParkBites";
+            StateHasChanged(); // Re-render the component with updated state
+        }
+    }
     // reset input utility
     public void ResetInputsFood()
     {
