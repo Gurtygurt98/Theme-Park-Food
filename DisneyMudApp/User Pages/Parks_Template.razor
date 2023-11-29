@@ -229,7 +229,7 @@
     }
     private async Task GeneratePDF()
     {
-        //COOMMET
+        //COOMMETdd
         var parkMenuText = FormatParkMenuForPDF();
         await JSRuntime.InvokeVoidAsync("createPdfFromText", parkMenuText, ParkMenu.ParkName ?? "Error");
     }
