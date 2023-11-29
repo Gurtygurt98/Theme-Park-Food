@@ -3,12 +3,13 @@
 @using SQL_API
 @using SQL_API.Models
 @using SQL_API.Data
+@using System.Text;
 @inject IParkData _dbPark;
 @inject IAreaData _dbArea;
 @inject IAllergyData _dbAllergy;
 @inject ITagData _dbTag;
 @inject ILocationData _dbLocation;
-
+@inject IJSRuntime JSRuntime
 <MudGrid Spacing="4">
     <MudItem xs="12">
         <MudText Typo="Typo.h2" Align="Align.Center">@(ParkMenu != null ? ParkMenu.ParkName : "Park not found")</MudText>
@@ -18,7 +19,10 @@
     </MudItem>
     <MudDivider Style="padding-bottom: 20px"></MudDivider>
     <MudItem xs="12">
-        <MudToggleIconButton Style="padding-bottom: 20px" Icon="@Icons.Outlined.FilterAlt" Color="Color.Primary" @onclick="@ToggleFilterPopover">Edit</MudToggleIconButton>
+        <MudStack Row="@true">
+                <MudToggleIconButton Style="padding-bottom: 20px" Icon="@Icons.Outlined.FilterAlt" Color="Color.Primary" @onclick="@ToggleFilterPopover"></MudToggleIconButton>
+                <MudButton Style="padding-bottom: 20px" Color="Color.Primary" @onclick="@GeneratePDF">Generate PDF</MudButton>
+        </MudStack>
     </MudItem>
     @*Display the menu, stored in the MenuList - List  *@
     <MudItem xs="12">
@@ -76,7 +80,7 @@
                 @foreach(FoodModel food in location.Foods)
                 {
                     <MudItem xs="12">
-                        <MudText Typo="Typo.h5" Style="margin-left: 50px;">@food.FoodName</MudText>
+                        <MudText Typo="Typo.h5" Style="margin-left: 50px;">@food.FoodName - $@food.Price</MudText>
                     </MudItem>
                 }
             }
@@ -196,6 +200,37 @@
         // Trigger UI update
         StateHasChanged();
         ToggleFilterPopover();
+    }
+    private string FormatParkMenuForPDF()
+    {
+        if (ParkMenu == null)
+            return "Park information is not available.";
+
+        var stringBuilder = new StringBuilder();
+        stringBuilder.AppendLine(ParkMenu.ParkName);
+        stringBuilder.AppendLine();
+
+        foreach (var area in ParkMenu.Areas)
+        {
+            stringBuilder.AppendLine($"{area.AreaName}");
+            foreach (var location in area.Locations)
+            {
+                stringBuilder.AppendLine($"     {location.LocationName}");
+                foreach (var food in location.Foods)
+                {
+                    stringBuilder.AppendLine($"       {food.FoodName} - ${food.Price}");
+                    // Add more details here as needed
+                }
+            }
+            stringBuilder.AppendLine();
+        }
+
+        return stringBuilder.ToString();
+    }
+    private async Task GeneratePDF()
+    {
+        var parkMenuText = FormatParkMenuForPDF();
+        await JSRuntime.InvokeVoidAsync("createPdfFromText", parkMenuText, ParkMenu.ParkName ?? "Error");
     }
 
 }

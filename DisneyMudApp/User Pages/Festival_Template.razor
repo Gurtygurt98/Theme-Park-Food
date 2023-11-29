@@ -3,13 +3,14 @@
 @using SQL_API
 @using SQL_API.Models
 @using SQL_API.Data
+@using System.Text;
 @inject IFestivalData _dbFestival;
 @inject IParkData _dbPark;
 @inject IAreaData _dbArea;
 @inject IAllergyData _dbAllergy;
 @inject ITagData _dbTag;
 @inject ILocationData _dbLocation;
-
+@inject IJSRuntime JSRuntime;
 <MudGrid Spacing="4">
     <MudItem xs="12">
         <MudText Typo="Typo.h2" Align="Align.Center">@(FestivalMenu != null ? FestivalMenu.FestivalName : "Festival not found")</MudText>
@@ -19,7 +20,10 @@
         </MudItem>
         <MudDivider Style="padding-bottom: 20px"></MudDivider>
         <MudItem xs="12">
-            <MudToggleIconButton Style="padding-bottom: 20px" Icon="@Icons.Outlined.FilterAlt" Color="Color.Primary" @onclick="@ToggleFilterPopover">Edit</MudToggleIconButton>
+            <MudStack Row="@true">
+                <MudToggleIconButton Style="padding-bottom: 20px" Icon="@Icons.Outlined.FilterAlt" Color="Color.Primary" @onclick="@ToggleFilterPopover"></MudToggleIconButton>
+                <MudButton Style="padding-bottom: 20px" Color="Color.Primary" @onclick="@GeneratePDF">Generate PDF</MudButton>
+            </MudStack>
         </MudItem>
         <MudItem xs="12">
             @if (FilterPopover)
@@ -151,6 +155,32 @@
         // Trigger UI update
         StateHasChanged();
         ToggleFilterPopover();
+    }
+    private string FormatFestivalMenuForPDF()
+    {
+        if (FestivalMenu == null)
+            return "Festival information is not available.";
+
+        var stringBuilder = new StringBuilder();
+        stringBuilder.AppendLine(FestivalMenu.FestivalName);
+        stringBuilder.AppendLine();
+        foreach (var location in FestivalMenu.Locations)
+        {
+            stringBuilder.AppendLine($"{location.LocationName}");
+            foreach (var food in location.Foods)
+            {
+                stringBuilder.AppendLine($"     {food.FoodName} - ${food.Price}");
+                // Add more details here as needed
+            }
+        }
+        
+
+        return stringBuilder.ToString();
+    }
+    private async Task GeneratePDF()
+    {
+        var parkMenuText = FormatFestivalMenuForPDF();
+        await JSRuntime.InvokeVoidAsync("createPdfFromText", parkMenuText, FestivalMenu.FestivalName ?? "Error");
     }
 
 }

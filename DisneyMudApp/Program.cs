@@ -13,7 +13,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddTransient<ISQLDataAccess,SQLDataAccess>();
 builder.Services.AddTransient<IFestivalData, FestivalData>();
-builder.Services.AddTransient<IMenuData, MenuData>();
 builder.Services.AddTransient<IFoodData, FoodData>();
 builder.Services.AddTransient<IParkData, ParkData>();
 builder.Services.AddTransient<IAllergyData, AllergyData>();
