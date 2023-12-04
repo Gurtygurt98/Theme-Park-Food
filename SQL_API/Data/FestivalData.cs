@@ -42,6 +42,7 @@ namespace SQL_API.Data
         }
         public async Task<FestivalModel> GetFestivalMenuAsync(string FestivalName)
         {
+            // A single festival model repersents the entire festival menu 
             FestivalModel FestivalMenu = new FestivalModel();
             string sql = $@"SELECT Festival.FestivalName,  Festival.Description
                         FROM Festival WHERE FestivalName = @FestivalName";

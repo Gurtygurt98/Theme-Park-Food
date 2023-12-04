@@ -1,14 +1,20 @@
-﻿@page "/AdminDashboard"
+﻿@*
+    Project Developed by : Austin Phillips 
+    Page was Implemented using MudBlazor Components : https://mudblazor.com/
+    Page Description: This page provides links to all admin pages to manage database content 
+*@
+@page "/AdminDashboard"
 @using DisneyMudApp
 @using MudBlazor
 @using SQL_API.Data
 @using SQL_API.Models
 @inject IJSRuntime JSRuntime
-
+@*Header*@
 <MudText Typo="Typo.h2" Align="Align.Left">Admin Dashboard</MudText>
-
+@*Checks if the user is an admin*@
 @if (IsAdmin)
 {
+    @*Displays links to admin pages*@
     <MudGrid>
         <MudItem xs="6">
             <MudStack>
@@ -32,24 +38,30 @@
 }
 else
 {
+    @*Provides the user to enter admin credentials *@
     <MudTextField @bind-Value="enteredToken" Label="Enter Admin Token" Error="@InvalidToken"/>
     <MudButton OnClick="@VerifyToken">Submit</MudButton>
 }
 
 @code {
+    @*Variable declarations *@
     private bool IsAdmin = false;
     private string enteredToken;
     private Boolean InvalidToken = false;
+    // Runs after the screen is rendered 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        // Only runs on first render 
         if (firstRender)
         {
+            // Checks if the locally stored token matches the admin token, simple admin token used for demonstration purposes 
             var token = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "adminToken");
             IsAdmin = token == "ThemeParkBites";
-            StateHasChanged(); // Re-render the component with updated state
+            // Re-render the component with updated state
+            StateHasChanged(); 
         }
     }
-
+    // Verifies a token is correct 
     private async Task VerifyToken()
     {
         if (enteredToken == "ThemeParkBites")

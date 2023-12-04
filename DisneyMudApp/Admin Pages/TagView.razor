@@ -1,15 +1,20 @@
-﻿@page "/TagAdmin"
+﻿@*
+    Project Developed by : Austin Phillips
+    Page was Implemented using MudBlazor Components : https://mudblazor.com/
+    Page Description: This page provides a way to create, update, replace and delete items from the Tag database table
+*@
+@page "/TagAdmin"
 @using DisneyMudApp
 @using MudBlazor
 @using SQL_API.Data
 @using SQL_API.Models
 @inject ITagData _db;
 @inject IJSRuntime JSRuntime
-
+@*Header*@
 <MudText Typo="Typo.h2">Tag Data</MudText>
-
+@*Verifies the user is an admin *@
 @if (IsAdmin)
-{
+{   @*Popover used for user to enter information into the tag database*@
     <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
         <MudForm>
             <MudGrid>
@@ -27,7 +32,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdateTag">Update</MudButton>
         </MudButtonGroup>
     </MudPopover>
-
+    @*Displays tag table from database in a data grid *@
     @if (TagList.Any())
     {
         <MudDataGrid Items="TagList" Virtualize="true" Striped="true">
@@ -46,6 +51,7 @@
      </MudDataGrid>
     }
 }
+@*Provides user with feedback that they are unanble to access admin information *@
 else
 {
     <MudText Typo="Typo.h3">Unauthorized Access</MudText>
@@ -53,18 +59,19 @@ else
 }
 
 @code {
+    // Variable declaration 
     bool isOpenEdit = false;
     int ID;
     string? TagName = "";
     string? FoodName = "";
     List<TagModel> TagList = new List<TagModel>();
     private bool IsAdmin = false;
-
+    // Retrives the data in the tag table 
     protected override async Task OnInitializedAsync()
     {
         TagList = await _db.GetTagData();
     }
-
+    // Function used to check admin token to allow user access to the admin section
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -74,19 +81,19 @@ else
             StateHasChanged();
         }
     }
-
+    // Function used to clear inputs when the user closes and opens the pop over 
     public void ToggleEditPopover()
     {
         ResetInputs();
         isOpenEdit = !isOpenEdit;
     }
-
+    // Resets the inputs used for database inputs 
     public void ResetInputs()
     {
         TagName = "";
         FoodName = "";
     }
-
+    // Opens the edit popover 
     public void EditTag(TagModel item)
     {
         ToggleEditPopover();
@@ -94,14 +101,14 @@ else
         TagName = item.TagName;
         FoodName = item.FoodName;
     }
-
+    // Deletes a tag from the database
     public async Task DeleteTag()
     {
         await _db.DeleteTag(new TagModel(ID, TagName, FoodName));
         ToggleEditPopover();
         TagList = await _db.GetTagData();
     }
-
+    // Updates a tag in the database 
     public async Task UpdateTag()
     {
         await _db.UpdateTag(new TagModel(ID, TagName, FoodName));

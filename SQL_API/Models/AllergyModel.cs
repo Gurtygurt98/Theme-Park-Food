@@ -50,7 +50,7 @@ namespace SQL_API.Models
             return StringComparer.OrdinalIgnoreCase.GetHashCode(AllergyName);
         }
 
-        // ToString method displaying Name, StartDate, EndDate, and ID
+        // ToString method displaying Name
         public override string ToString()
         {
             return AllergyName;

@@ -19,6 +19,7 @@ namespace SQL_API.Models
         public string AreaName { get; set; } = "";
         public string ParkName { get; set; }
         public List<LocationModel> Locations { get; set; }
+        // Constructor 
         public AreaModel(string AreaName, string ParkName)
         {
             this.ParkName = ParkName;

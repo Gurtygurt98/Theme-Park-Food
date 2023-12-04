@@ -1,4 +1,9 @@
-﻿@page "/ParkAdmin"
+﻿@*
+    Project Developed by : Austin Phillips
+    Page was Implemented using MudBlazor Components : https://mudblazor.com/
+    Page Description: This page provides a way to create, update, replace and delete items from the Park database table
+*@
+@page "/ParkAdmin"
 @using DisneyMudApp
 @using MudBlazor
 @using SQL_API.Data
@@ -10,6 +15,7 @@
 
 @if (IsAdmin)
 {
+    @*Edit popover to replace database entries in the park table *@
     <MudToolBar>
         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
     </MudToolBar>
@@ -29,6 +35,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="AddPark">Submit</MudButton>
         </MudButtonGroup>
     </MudPopover>
+    @*Add Pop over to provide space for user input *@
     <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
         <MudForm>
             <MudGrid>
@@ -46,6 +53,7 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="UpdatePark">Update</MudButton>
         </MudButtonGroup>
     </MudPopover>
+    @*Displays the data in the park table *@
     @if (ParkList.Any())
     {
         <MudDataGrid Items="ParkList" Virtualize="true" Striped="true">
@@ -66,6 +74,7 @@
 }
 else
 {
+    @*Provides the user with feedback if they are not an admin*@
     <MudText Typo="Typo.h3">Unauthorized Access</MudText>
     <MudLink Typo="Typo.h4" Href="/" Color="Color.Primary">Return to Home</MudLink>
 }
@@ -78,12 +87,12 @@ else
     string? Description = "";
     List<ParkModel> ParkList = new();
     private bool IsAdmin = false;
-
+    // Pulls data from the database on intialization 
     protected override async Task OnInitializedAsync()
     {
         ParkList = await _db.GetParkData();
     }
-
+    // Checks that the user is an admin user 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

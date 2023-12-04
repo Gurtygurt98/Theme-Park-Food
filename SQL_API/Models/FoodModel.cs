@@ -8,6 +8,7 @@ namespace SQL_API.Models
 {
     public class FoodModel
     {
+        // Variable declaration 
         public int ID { get; set; }
         public string FoodName { get; set; } = "";
         public string Description { get; set; } 
@@ -18,8 +19,9 @@ namespace SQL_API.Models
         public string FoodType { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
-        public string Allergies { get; set; } // String type to match the SQL output
+        public string Allergies { get; set; } 
         public string Tags { get; set; }
+        // Construtors 
         public FoodModel() { }
         public FoodModel(string foodName, string description, string location,decimal Price, string Cuisine,
             string foodType , string ImageUrl, string start, string end)
