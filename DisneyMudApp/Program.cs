@@ -11,6 +11,7 @@ StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configurat
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+// Add transient services to allow database actions to be performed through the web views that are created 
 builder.Services.AddTransient<ISQLDataAccess,SQLDataAccess>();
 builder.Services.AddTransient<IFestivalData, FestivalData>();
 builder.Services.AddTransient<IFoodData, FoodData>();

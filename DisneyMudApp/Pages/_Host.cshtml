@@ -1,4 +1,8 @@
-﻿@page "/"
+﻿@*
+    Project Developed by : Austin Phillips
+    Page Description: This page is a default page for a blazor project
+*@
+@page "/"
 @namespace DisneyMudApp.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
@@ -6,6 +10,7 @@
 }
 
 <component type="typeof(App)" render-mode="ServerPrerendered" />
+@*JavaScript function to create a pdf of the text parameter that is passed and save it as the name pararmeter.pdf*@
 <script>
 
     function createPdfFromText(text,name) {

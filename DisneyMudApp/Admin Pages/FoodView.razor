@@ -188,27 +188,27 @@ else
     bool isOpenEdit = false;
     bool isPerm = false;
     Boolean IsAdmin = false;
-    string Allergy;
-    string Tag;
+    string? Allergy;
+    string? Tag;
     public List<FoodModel> FoodList = new();
     public List<LocationModel> LocationList = new();
     public List<string> AllergyList = new();
     public List<string> CuisineList = new();
     public List<string> TagList = new();
     public List<string> FoodTypeList = new();
-    string startDateString;
-    string endDateString;
+    string startDateString = "";
+    string endDateString = "";
     public CultureInfo _en = CultureInfo.GetCultureInfo("en-US");
     // Food Model Data
     public int ID { get; set; }
-    public string FoodName { get; set; }
-    public string Description { get; set; }
-    public string Location { get; set; }
+    public string FoodName { get; set; } = "";
+    public string Description { get; set; } = "";
+    public string Location { get; set; } = "";
     public decimal Price { get; set; }
-    public string Park { get; set; }
-    public string Cuisine { get; set; }
-    public string ImageUrl { get; set; }
-    public string FoodType { get; set; }
+    public string Park { get; set; } = "";
+    public string Cuisine { get; set; } = "";
+    public string ImageUrl { get; set; } = "";
+    public string FoodType { get; set; } = "";
     public IEnumerable<string> FoodAllergyList = new HashSet<string>();
     public IEnumerable<string> FoodTagList = new HashSet<string>();
     public LocationModel LocationItem = new LocationModel();

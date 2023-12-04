@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+    Project Developed by : Austin Phillips
+    Page was Implemented using Dapper ORM 
+    Page Description: This page provides a class outline for the FestivalData to map data to. 
+
+*/
+using System;
 
 namespace SQL_API.Models
 {
@@ -6,11 +12,11 @@ namespace SQL_API.Models
     {
         public string FestivalName { get; set; } = "";
         public int ID { get; set; }
-        public string StartDate { get; set; }
-        public string EndDate { get; set; }
-        public string ParkName { get; set; }
-        public string Description { get; set; }
-        public List<LocationModel>  Locations { get; set; } 
+        public string StartDate { get; set; } = "";
+        public string EndDate { get; set; } = "";
+        public string ParkName { get; set; } = "";
+        public string Description { get; set; } = "";
+        public List<LocationModel>  Locations { get; set; }  = new List<LocationModel>();
         public FestivalModel() { }
         public FestivalModel(string festivalName)
         {
@@ -36,7 +42,7 @@ namespace SQL_API.Models
         }
 
         // Equals method comparing only Name
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is FestivalModel other)
             {

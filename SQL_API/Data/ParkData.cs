@@ -1,4 +1,9 @@
-﻿using SQL_API.Models;
+﻿/*
+    Project Developed by : Austin Phillips
+    Page was Implemented using Dapper ORM 
+    Page Description: This page provides a set of functions to perform database operations on the park table
+*/
+using SQL_API.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SQL_API.Data
 {
+    // Recieves interface to SQLDataAccess class to secure the connection string 
     public class ParkData : IParkData
     {
         private readonly ISQLDataAccess _db;
@@ -15,28 +21,33 @@ namespace SQL_API.Data
         {
             _db = db;
         }
+        // Gets all park data from the park table 
         public Task<List<ParkModel>> GetParkData()
         {
             string sql = $@"SELECT  *
                         FROM Park";
             return _db.LoadData<ParkModel>(sql, new { });
         }
+        // Inserts a ParkModel into the park database
         public Task insertPark(ParkModel parkItem)
         {
             string sql = @"INSERT INTO Park (ParkName, Description)" +
                 " VALUES (@ParkName, @Description);";
             return _db.SaveData(sql, parkItem);
         }
+        // Removes a ParkModel from the Park Table, ID is used for the delete 
         public Task DeletePark(ParkModel parkItem)
         {
             string sql = "DELETE FROM Park WHERE ParkName = @ParkName;";
             return _db.SaveData(sql, parkItem);
         }
+        // Update a allergy entry in the allergy table 
         public Task UpdatePark(ParkModel parkItem)
         {
             string sql = @"UPDATE Park SET ParkName = @ParkName, Description = @Description  WHERE ID = @ID;";
             return _db.SaveData(sql, parkItem);
         }
+        // Retrives a single park model from the database given a parkname 
         public Task<List<ParkModel>> GetParkSingle(string ParkName)
         {
             string sql = $@"SELECT  *
@@ -44,7 +55,7 @@ namespace SQL_API.Data
             var parameters = new { ParkName };
             return _db.LoadData<ParkModel>(sql, parameters);
         }
-
+        // Builds the menu for a park, main function that drives the user menu view 
         public async Task<ParkModel> GetParkMenuAsync(string ParkName)
         {
             ParkModel ParkMenu = new ParkModel();

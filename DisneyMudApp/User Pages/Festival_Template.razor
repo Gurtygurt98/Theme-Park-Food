@@ -1,4 +1,12 @@
-﻿@page "/Festival/{FestivalName}"
+﻿@*
+    Project Developed by : Austin Phillips
+    Page was Implemented using MudBlazor Components : https://mudblazor.com/
+    Page Description: This page provides a template for how a user request for a festival menu is handled 
+
+*@
+@*Festival name is specifed in the url, Passed as a parameter*@
+@page "/Festival/{FestivalName}"
+@*Imports for C# utilities and database interfaces that are needed *@
 @using MudBlazor
 @using SQL_API
 @using SQL_API.Models
@@ -12,53 +20,57 @@
 @inject ILocationData _dbLocation;
 @inject IJSRuntime JSRuntime;
 <MudGrid Spacing="4">
+    @*Display Header, with error handling for a park that is not found*@
     <MudItem xs="12">
         <MudText Typo="Typo.h2" Align="Align.Center">@(FestivalMenu != null ? FestivalMenu.FestivalName : "Festival not found")</MudText>
         </MudItem>
         <MudItem xs="12">
+            @*Display Description, with error handling for a park that is not found*@
             <MudText Typo="Typo.subtitle1">@(FestivalMenu != null ? FestivalMenu.Description : "Festival not found - desc")</MudText>
         </MudItem>
         <MudDivider Style="padding-bottom: 20px"></MudDivider>
         <MudItem xs="12">
+            @*Buttons used for toggling the filter inputs and the button to download the pdf, function calls explained in the code section*@
             <MudStack Row="@true">
                 <MudToggleIconButton Style="padding-bottom: 20px" Icon="@Icons.Outlined.FilterAlt" Color="Color.Primary" @onclick="@ToggleFilterPopover"></MudToggleIconButton>
                 <MudButton Style="padding-bottom: 20px" Color="Color.Primary" @onclick="@GeneratePDF">Generate PDF</MudButton>
             </MudStack>
         </MudItem>
         <MudItem xs="12">
+        @*Provides user input section for filter specifications *@
             @if (FilterPopover)
-        {
-            <div style="padding-left:10px">
-                <MudSelect T="string" Label="Locations" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="LocationFilters">
-                    @foreach (String location in LocationList)
-                    {
-                        <MudSelectItem T="string" Value="@location">@location</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudSelect T="string" Label="Tags" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="TagFilters">
-                    @foreach (String tag in TagList)
-                    {
-                        <MudSelectItem T="string" Value="@tag">@tag</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudSelect T="string" Label="Allergies" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="AllergyFilters">
-                    @foreach (String allergy in AllergyList)
-                    {
-                        <MudSelectItem T="string" Value="@allergy">@allergy</MudSelectItem>
-                    }
-                </MudSelect>
-                <MudDivider>
-                </MudDivider>
-                <MudStack Row="true">
-                    <MudButton OnClick="@ToggleFilterPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="@UpdateMenu">Submit</MudButton>
-                </MudStack>
-            </div>
-        }
+            {        
+                <div style="padding-left:10px">
+                    <MudSelect T="string" Label="Locations" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="LocationFilters">
+                        @foreach (String location in LocationList)
+                        {
+                            <MudSelectItem T="string" Value="@location">@location</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudSelect T="string" Label="Tags" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="TagFilters">
+                        @foreach (String tag in TagList)
+                        {
+                            <MudSelectItem T="string" Value="@tag">@tag</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudSelect T="string" Label="Allergies" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="AllergyFilters">
+                        @foreach (String allergy in AllergyList)
+                        {
+                            <MudSelectItem T="string" Value="@allergy">@allergy</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudDivider>
+                    </MudDivider>
+                    <MudStack Row="true">
+                        <MudButton OnClick="@ToggleFilterPopover" Variant="Variant.Filled" Color="Color.Error" Size="Size.Large">Close</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" OnClick="@UpdateMenu">Submit</MudButton>
+                    </MudStack>
+                </div>
+            }
     </MudItem>
 
 
-
+    @*Display the menu, stored in the MenuList - List, will only display items that meet the filtering requirments  *@
     @if (FestivalMenu != null && FestivalMenu.Locations.Any())
     {
         @foreach (LocationModel location in FestivalMenu.Locations)
@@ -156,6 +168,7 @@
         StateHasChanged();
         ToggleFilterPopover();
     }
+    // Prints the park menu to a pdf
     private string FormatFestivalMenuForPDF()
     {
         if (FestivalMenu == null)
@@ -179,6 +192,7 @@
     }
     private async Task GeneratePDF()
     {
+        //Generate PDF using java script function
         var parkMenuText = FormatFestivalMenuForPDF();
         await JSRuntime.InvokeVoidAsync("createPdfFromText", parkMenuText, FestivalMenu.FestivalName ?? "Error");
     }

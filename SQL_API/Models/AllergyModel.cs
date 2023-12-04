@@ -1,10 +1,10 @@
-﻿/*
- * Table = Allergy 
- * Relates to the Food Table through FoodName variable
- * 
- * 
- */
+﻿
+/*
+    Project Developed by : Austin Phillips
+    Page was Implemented using Dapper ORM 
+    Page Description: This page provides a class outline for the AllergyData to map data to. 
 
+*/
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +17,8 @@ namespace SQL_API.Models
     {
         // Variable decleration 
         public int ID { get; set; }
-        public string AllergyName { get; set; }
-        public string FoodName { get;set; }
+        public string AllergyName { get; set; } = "";
+        public string FoodName { get; set; } = "";
         // Constructor 
         public AllergyModel(string allergyName, string FoodName)
         {
@@ -35,7 +35,7 @@ namespace SQL_API.Models
         public AllergyModel() { }
 
         // Equals method comparing only Name
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is AllergyModel other)
             {

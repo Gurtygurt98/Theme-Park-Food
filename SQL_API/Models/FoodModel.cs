@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+    Project Developed by : Austin Phillips
+    Page was Implemented using Dapper ORM 
+    Page Description: This page provides a class outline for the FoodData to map data to. 
+
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,16 +17,16 @@ namespace SQL_API.Models
         // Variable declaration 
         public int ID { get; set; }
         public string FoodName { get; set; } = "";
-        public string Description { get; set; } 
-        public string LocationName { get; set; }
+        public string Description { get; set; } = "";
+        public string LocationName { get; set; } = "";
         public decimal Price { get; set; }
-        public string Cuisine { get; set; }
-        public string ImageUrl { get; set; }
-        public string FoodType { get; set; }
-        public string StartDate { get; set; }
-        public string EndDate { get; set; }
-        public string Allergies { get; set; } 
-        public string Tags { get; set; }
+        public string Cuisine { get; set; } = "";
+        public string ImageUrl { get; set; } = "";
+        public string FoodType { get; set; } = "";
+        public string StartDate { get; set; } = "";
+        public string EndDate { get; set; } = "";
+        public string Allergies { get; set; } = "";
+        public string Tags { get; set; } = "";
         // Construtors 
         public FoodModel() { }
         public FoodModel(string foodName, string description, string location,decimal Price, string Cuisine,
@@ -51,7 +57,7 @@ namespace SQL_API.Models
             this.EndDate = end;
         }
         // Equals method comparing only FoodName
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is FoodModel other)
             {

@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+    Project Developed by : Austin Phillips
+    Page was Implemented using Dapper ORM 
+    Page Description: This page provides a class outline for the TagData to map data to. 
+
+*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +15,8 @@ namespace SQL_API.Models
     public class TagModel
     {
         public int ID { get; set; }
-        public string TagName { set; get; }
-        public string FoodName { set; get; }
+        public string TagName { set; get; } = "";
+        public string FoodName { set; get; } = "";
         public TagModel() { }
 
         public TagModel(string TagName, string FoodName) 
@@ -24,7 +30,7 @@ namespace SQL_API.Models
             this.TagName = TagName;
             this.FoodName = FoodName;
         }
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is TagModel other)
             {

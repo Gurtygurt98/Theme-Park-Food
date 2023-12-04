@@ -1,38 +1,51 @@
-﻿using SQL_API.Models;
+﻿/*
+    Project Developed by : Austin Phillips
+    Page was Implemented using Dapper ORM 
+    Page Description: This page provides a set of functions to perform database operations on the Festival table 
+
+*/
+using SQL_API.Models;
 
 
 namespace SQL_API.Data
 {
     public class FestivalData : IFestivalData
     {
+        // Recieves interface to SQLDataAccess class to secure the connection string 
         private readonly ISQLDataAccess _db;
 
         public FestivalData(ISQLDataAccess db)
         {
             _db = db;
         }
+        // Gets all festival data from the festival table 
         public Task<List<FestivalModel>> GetFestivalData()
         {
             string sql = $@"SELECT  *
                         FROM Festival";
             return _db.LoadData<FestivalModel>(sql, new { });
         }
+        // Inserts a FestivalModel into the festival database
         public Task insertFestival(FestivalModel festivalItem)
         {
             string sql = @"INSERT INTO Festival (FestivalName, StartDate, EndDate, ParkName, Description)" +
                 " VALUES (@FestivalName , @StartDate , @EndDate , @ParkName , @Description);";
             return _db.SaveData(sql, festivalItem);
         }
+        // Removes a FestivalModel from the Festival Table, ID is used for the delete 
         public Task DeleteFestival(FestivalModel festivalItem)
         {
             string sql = "DELETE FROM Festival WHERE ID = @ID;";
             return _db.SaveData(sql, festivalItem);
         }
+        // Update a festival entry in the festival table 
+
         public Task UpdateFestival(FestivalModel festivalItem)
         {
             string sql = @"UPDATE FESTIVAL  SET FestivalName = @FestivalName, StartDate = @StartDate, EndDate = @EndDate, ParkName = @ParkName, Description = @Description    WHERE ID = @ID;";
             return _db.SaveData(sql, festivalItem);
         }
+        // Gets a single festivalModel from a parameter of the festival name 
         public Task<List<FestivalModel>> GetFestivalSingle(string FestivalName)
         {
             string sql = $@"SELECT  *
@@ -40,6 +53,7 @@ namespace SQL_API.Data
             var parameters = new { FestivalName };
             return _db.LoadData<FestivalModel>(sql, parameters);
         }
+        // Main method to build a festival menu 
         public async Task<FestivalModel> GetFestivalMenuAsync(string FestivalName)
         {
             // A single festival model repersents the entire festival menu 

@@ -19,7 +19,7 @@
     <MudToolBar>
         <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Variant="Variant.Filled" Color="Color.Primary" @onclick="@ToggleAddPopover"></MudIconButton>
     </MudToolBar>
-    @*Add Pop over *@
+    @*Add Pop over to add items to the location table  *@
     <MudPopover Open="@isOpenAdd" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
         <MudPaper MinHeight="50%" MinWidth="50%">
             <MudForm>
@@ -51,7 +51,7 @@
         </MudPaper>
     </MudPopover>
 
-    @*Edit Delete Pop over *@
+    @*Edit Delete Pop over - update items already in the location database  *@
     <MudPopover Open="@isOpenEdit" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.CenterCenter">
         <MudForm>
             <MudGrid>
@@ -106,6 +106,7 @@
 }
 else
 {
+    @*Provide feedback to the user that they are not authorized to view the content of this page *@
     <MudText Typo="Typo.h3">Please click the below link to access admin pages</MudText>
     <MudLink Typo="Typo.h4" Href="/AdminDashboard" Color="Color.Primary" Target="_blank">Dashboard</MudLink>
 
@@ -117,7 +118,6 @@ else
     bool isOpenAdd= false;
     bool isOpenEdit = false;
     Boolean IsAdmin = false;
-
     int ID;
     AreaModel AreaItem;
     FestivalModel FestivalItem;

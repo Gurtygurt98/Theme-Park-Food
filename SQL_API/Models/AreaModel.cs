@@ -1,9 +1,9 @@
 ﻿/*
- * Table = Area 
- * Relates to the Food Table through LocationName-> Location Table -> AreaName 
- * 
- * 
- */
+    Project Developed by : Austin Phillips
+    Page was Implemented using Dapper ORM 
+    Page Description: This page provides a class outline for the AreaData to map data to. 
+
+*/
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +17,8 @@ namespace SQL_API.Models
         // Variable Declaration  
         public int ID { get; set; }
         public string AreaName { get; set; } = "";
-        public string ParkName { get; set; }
-        public List<LocationModel> Locations { get; set; }
+        public string ParkName { get; set; } = "";
+        public List<LocationModel> Locations { get; set; } = new List<LocationModel>();
         // Constructor 
         public AreaModel(string AreaName, string ParkName)
         {
@@ -38,7 +38,7 @@ namespace SQL_API.Models
         // Default constructor 
         public AreaModel() { }
         // Equals method comparing only Name
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is AreaModel other)
             {

@@ -1,4 +1,12 @@
-﻿@page "/Parks/{ParkName}"
+﻿@*
+    Project Developed by : Austin Phillips
+    Page was Implemented using MudBlazor Components : https://mudblazor.com/
+    Page Description: This page provides a template for how a user request for a Park menu is handled
+
+*@
+@*Park name is specifed in the url, Passed as a parameter*@
+@page "/Parks/{ParkName}"
+@*Imports for C# utilities and database interfaces that are needed *@
 @using MudBlazor
 @using SQL_API
 @using SQL_API.Models
@@ -10,22 +18,26 @@
 @inject ITagData _dbTag;
 @inject ILocationData _dbLocation;
 @inject IJSRuntime JSRuntime
+
 <MudGrid Spacing="4">
+    @*Display Header, with error handling for a park that is not found*@
     <MudItem xs="12">
         <MudText Typo="Typo.h2" Align="Align.Center">@(ParkMenu != null ? ParkMenu.ParkName : "Park not found")</MudText>
     </MudItem>
     <MudItem xs="12">
-            <MudText Typo="Typo.subtitle1">@(ParkMenu != null ? ParkMenu.Description : "Park not found - desc")</MudText>
+        @*Display Description, with error handling for a park that is not found*@
+        <MudText Typo="Typo.subtitle1">@(ParkMenu != null ? ParkMenu.Description : "Park not found - desc")</MudText>
     </MudItem>
     <MudDivider Style="padding-bottom: 20px"></MudDivider>
     <MudItem xs="12">
+        @*Buttons used for toggling the filter inputs and the button to download the pdf, function calls explained in the code section*@
         <MudStack Row="@true">
                 <MudToggleIconButton Style="padding-bottom: 20px" Icon="@Icons.Outlined.FilterAlt" Color="Color.Primary" @onclick="@ToggleFilterPopover"></MudToggleIconButton>
                 <MudButton Style="padding-bottom: 20px" Color="Color.Primary" @onclick="@GeneratePDF">Generate PDF</MudButton>
         </MudStack>
     </MudItem>
-    @*Display the menu, stored in the MenuList - List  *@
     <MudItem xs="12">
+        @*Provides user input section for filter specifications *@
         @if(FilterPopover){
             <div style="padding-left:10px">
 
@@ -63,8 +75,8 @@
             </div>
         }
     </MudItem>
-        
 
+    @*Display the menu, stored in the MenuList - List, will only display items that meet the filtering requirments  *@
 
     @if(ParkMenu.Areas.Any()){
         @foreach(AreaModel area in ParkMenu.Areas){
@@ -86,14 +98,7 @@
             }
         }
     }
-
-
-
-
 </MudGrid>
-
-
-
 @code {
     // Main Menu Data structure 
     ParkModel ParkMenu = new ParkModel();
@@ -113,6 +118,7 @@
     String CurrentLocation;
     Boolean FilterPopover = false;
     int PrintCount;
+    // Parameter used for creating the page 
     [Parameter] public string ParkName { get; set; }
     // Runs on page intialization, queries database to gather menu and filtering data 
     protected override async Task OnInitializedAsync()
@@ -137,6 +143,7 @@
         }
         FilterPopover = true;
     }
+    // Apply filters to the menu data structure 
     public void UpdateMenu()
     {
         // Copy the original ParkMenu to apply filters without querying the database again
@@ -199,6 +206,7 @@
         StateHasChanged();
         ToggleFilterPopover();
     }
+    // Prints the park menu to a pdf 
     private string FormatParkMenuForPDF()
     {
         if (ParkMenu == null)
@@ -227,7 +235,7 @@
     }
     private async Task GeneratePDF()
     {
-        //COOMMETdd
+        //Generate PDF using java script function 
         var parkMenuText = FormatParkMenuForPDF();
         await JSRuntime.InvokeVoidAsync("createPdfFromText", parkMenuText, ParkMenu.ParkName ?? "Error");
     }

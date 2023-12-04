@@ -1,6 +1,11 @@
-﻿@inherits LayoutComponentBase
+﻿@*
+    Project Developed by : Austin Phillips
+    Page Description: This page is a default page for a blazor project, specifies the main layout to be used across the site 
+*@
+@inherits LayoutComponentBase
 <MudDialogProvider />
 <MudSnackbarProvider />
+@*Specifies the theme used for the site *@
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
 <MudLayout>
     <MudAppBar Elevation="0">
@@ -18,6 +23,7 @@
 @code {
     private bool _isDarkMode = false;
     private MudThemeProvider? _mudThemeProvider;
+    // Checks the user system settings for if dark mode is enabled, will switch to dark theme if dark mode is enable 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
