@@ -137,24 +137,29 @@
     }
     public void UpdateMenu()
     {
-        // Copy the original ParkMenu to apply filters without querying the database again
-        FestivalMenu = OriginalFestivalMenu;
+        // Copy the original FestivalMenu to apply filters without querying the database again
+        FestivalMenu = new FestivalModel
+            {
+                FestivalName = OriginalFestivalMenu.FestivalName,
+                Description = OriginalFestivalMenu.Description,
+                Locations = new List<LocationModel>(OriginalFestivalMenu.Locations)
+            };
 
-        // Apply Location Filter
-        if (LocationFilters.Any())
-        {
-            FestivalMenu.Locations = FestivalMenu.Locations
-                .Where(location => LocationFilters.Contains(location.LocationName))
-                .ToList();
-        }
-
-        // Apply Tag and Allergy Filters
+        // Filter Locations, and Foods together
         foreach (var location in FestivalMenu.Locations.ToList())
         {
+            // Apply Location Filter
+            if (LocationFilters.Any() && !LocationFilters.Contains(location.LocationName))
+            {
+                FestivalMenu.Locations.Remove(location);
+                continue;
+            }
+
+            // Apply Food Filters (Tags and Allergies) as AND conditions
             location.Foods = location.Foods
                 .Where(food =>
-                    (!TagFilters.Any() || TagFilters.Any(tag => food.Tags?.Contains(tag) == true)) &&
-                    (!AllergyFilters.Any() || AllergyFilters.Any(allergy => food.Allergies?.Contains(allergy) == true))
+                    (!TagFilters.Any() || TagFilters.All(tag => food.Tags?.Contains(tag) == true)) &&
+                    (!AllergyFilters.Any() || AllergyFilters.All(allergy => food.Allergies?.Contains(allergy) == true))
                 ).ToList();
 
             // Remove the location if it has no foods after filtering
@@ -168,6 +173,7 @@
         StateHasChanged();
         ToggleFilterPopover();
     }
+
     // Prints the park menu to a pdf
     private string FormatFestivalMenuForPDF()
     {

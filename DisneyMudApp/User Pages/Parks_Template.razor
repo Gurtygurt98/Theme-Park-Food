@@ -158,22 +158,37 @@
                 }))
             };
 
-        // Apply Area Filter
-        if (AreaFilters.Any())
-        {
-            ParkMenu.Areas = ParkMenu.Areas
-                .Where(area => AreaFilters.Contains(area.AreaName))
-                .ToList();
-        }
-
-        // Apply Location Filter
+        // Filter Areas, Locations, and Foods together
         foreach (var area in ParkMenu.Areas.ToList())
         {
-            if (LocationFilters.Any())
+            // Apply Area Filter
+            if (AreaFilters.Any() && !AreaFilters.Contains(area.AreaName))
             {
-                area.Locations = area.Locations
-                    .Where(location => LocationFilters.Contains(location.LocationName))
-                    .ToList();
+                ParkMenu.Areas.Remove(area);
+                continue;
+            }
+
+            foreach (var location in area.Locations.ToList())
+            {
+                // Apply Location Filter
+                if (LocationFilters.Any() && !LocationFilters.Contains(location.LocationName))
+                {
+                    area.Locations.Remove(location);
+                    continue;
+                }
+
+                // Apply Food Filters (Tags and Allergies)
+                location.Foods = location.Foods
+                    .Where(food =>
+                        (!TagFilters.Any() || TagFilters.All(tag => food.Tags?.Contains(tag) == true)) &&
+                        (!AllergyFilters.Any() || AllergyFilters.All(allergy => food.Allergies?.Contains(allergy) == true))
+                    ).ToList();
+
+                // Remove the location if it has no foods after filtering
+                if (!location.Foods.Any())
+                {
+                    area.Locations.Remove(location);
+                }
             }
 
             // Remove the area if it has no locations after filtering
@@ -183,29 +198,11 @@
             }
         }
 
-        // Apply Tag and Allergy Filters
-        foreach (var area in ParkMenu.Areas)
-        {
-            foreach (var location in area.Locations.ToList())
-            {
-                location.Foods = location.Foods
-                    .Where(food =>
-                        (!TagFilters.Any() || TagFilters.Any(tag => food.Tags?.Contains(tag) == true)) &&
-                        (!AllergyFilters.Any() || AllergyFilters.Any(allergy => food.Allergies?.Contains(allergy) == true))
-                    ).ToList();
-
-                // Remove the location if it has no foods after filtering
-                if (!location.Foods.Any())
-                {
-                    area.Locations.Remove(location);
-                }
-            }
-        }
-
         // Trigger UI update
         StateHasChanged();
         ToggleFilterPopover();
     }
+
     // Prints the park menu to a pdf 
     private string FormatParkMenuForPDF()
     {
